@@ -24,7 +24,7 @@ class TranslationCache:
 			cls._instance = super().__new__(cls)
 		return cls._instance
 
-	def __init__(self, filename: str = "translation_cache.json", max_size: int = 500) -> None:
+	def __init__(self, filename: str = "translation_cache.json", max_size: int = 10000) -> None:
 		super().__init__()
 		if hasattr(self, "_initialized"):
 			return
