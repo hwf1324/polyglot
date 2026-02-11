@@ -92,6 +92,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if not script:
 			script = self.script_layer_error
 
+		if getattr(script, '_stay_in_layer', False):
+			return script
+
 		def wrapped_script(g):
 			try:
 				script(g)
@@ -147,18 +150,31 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				lang_to=new_to,
 			)
 
-	@script(description=_("Swap source and target languages"))
-	def script_swapLanguages(self, gesture: "inputCore.InputGesture") -> None:
-		log.info("Script 'swapLanguages' triggered.")
-		success, message = self.manager.swap_languages()
+	def _cycle_language(self, target: str, forward: bool) -> None:
+		success, message = self.manager.cycle_language(target, forward)
 		ui.message(message)
 		if not success:
 			tones.beep(220, 120)
-			wx.CallAfter(
-				gui.mainFrame.popupSettingsDialog,
-				gui.settingsDialogs.NVDASettingsDialog,
-				settings.TranslationSettingsPanel,
-			)
+
+	@script(description=_("Next source language"))
+	def script_cycleSourceLangForward(self, gesture: "inputCore.InputGesture") -> None:
+		self._cycle_language("source", forward=True)
+	script_cycleSourceLangForward._stay_in_layer = True
+
+	@script(description=_("Previous source language"))
+	def script_cycleSourceLangBackward(self, gesture: "inputCore.InputGesture") -> None:
+		self._cycle_language("source", forward=False)
+	script_cycleSourceLangBackward._stay_in_layer = True
+
+	@script(description=_("Next target language"))
+	def script_cycleTargetLangForward(self, gesture: "inputCore.InputGesture") -> None:
+		self._cycle_language("target", forward=True)
+	script_cycleTargetLangForward._stay_in_layer = True
+
+	@script(description=_("Previous target language"))
+	def script_cycleTargetLangBackward(self, gesture: "inputCore.InputGesture") -> None:
+		self._cycle_language("target", forward=False)
+	script_cycleTargetLangBackward._stay_in_layer = True
 
 	@script(description=_("Announce current engine and languages"))
 	def script_announceEngineLanguagesInfo(self, gesture: "inputCore.InputGesture") -> None:
@@ -251,7 +267,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"kb:shift+b": "translateReverseClipboard",
 		"kb:l": "translateLastSpoken",
 		"kb:shift+l": "translateReverseLastSpoken",
-		"kb:s": "swapLanguages",
+		"kb:s": "cycleSourceLangForward",
+		"kb:shift+s": "cycleSourceLangBackward",
+		"kb:g": "cycleTargetLangForward",
+		"kb:shift+g": "cycleTargetLangBackward",
 		"kb:a": "announceEngineLanguagesInfo",
 		"kb:c": "copyLastResult",
 		"kb:v": "toggleAutoTranslate",

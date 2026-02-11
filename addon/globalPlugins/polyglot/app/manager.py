@@ -78,6 +78,50 @@ class TranslationManager:
 		)
 		return (True, message)
 
+	def cycle_language(self, target: str, forward: bool) -> tuple[bool, str]:
+		"""
+		Cycles the source or target language for the current engine.
+
+		Args:
+			target: "source" or "target", indicating which language to cycle.
+			forward: True to cycle forward, False to cycle backward.
+
+		Returns:
+			A tuple containing a boolean for success and a user-facing message.
+		"""
+		conf = config.get_config()
+		engine_id = conf["engine"]
+		try:
+			current_engine = engine_manager.get_engine_by_id(engine_id)
+		except (ValueError, NotImplementedError):
+			return (False, _("Invalid engine configuration."))
+		if engine_id not in conf["engines"]:
+			conf["engines"][engine_id] = {}
+		engine_conf = conf["engines"][engine_id]
+		all_langs = current_engine.get_supported_languages()
+		auto_code = current_engine.auto_detect_code
+		if target == "source":
+			config_key = "langFrom"
+			default_val = current_engine.default_source_language
+			lang_codes = list(all_langs.keys())
+		else:
+			config_key = "langTo"
+			default_val = current_engine.default_target_language
+			lang_codes = [code for code in all_langs.keys() if code != auto_code]
+		if not lang_codes:
+			return (False, _("No languages available for cycling."))
+		current_code = engine_conf.get(config_key, default_val)
+		try:
+			current_index = lang_codes.index(current_code)
+		except ValueError:
+			current_index = 0
+		step = 1 if forward else -1
+		new_index = (current_index + step) % len(lang_codes)
+		new_code = lang_codes[new_index]
+		engine_conf[config_key] = new_code
+		new_name = languages.ALL_LANGUAGES.get(new_code, new_code)
+		return (True, new_name)
+
 	def get_current_engine_and_language_info(self) -> str:
 		"""
 		Gets a formatted string of the current engine and languages for announcement,
