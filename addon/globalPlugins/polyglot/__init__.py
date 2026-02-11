@@ -192,6 +192,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self._cycle_engine(forward=False)
 	script_cycleEngineBackward._stay_in_layer = True
 
+	@script(description=_("Swap source and target languages"))
+	def script_swapLanguages(self, gesture: "inputCore.InputGesture") -> None:
+		success, message = self.manager.swap_languages()
+		ui.message(message)
+		if not success:
+			tones.beep(220, 120)
+	script_swapLanguages._stay_in_layer = True
+
 	@script(description=_("Announce current engine and languages"))
 	def script_announceEngineLanguagesInfo(self, gesture: "inputCore.InputGesture") -> None:
 		announcement = self.manager.get_current_engine_and_language_info()
@@ -289,6 +297,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"kb:shift+g": "cycleTargetLangBackward",
 		"kb:e": "cycleEngineForward",
 		"kb:shift+e": "cycleEngineBackward",
+		"kb:w": "swapLanguages",
 		"kb:a": "announceEngineLanguagesInfo",
 		"kb:c": "copyLastResult",
 		"kb:v": "toggleAutoTranslate",
