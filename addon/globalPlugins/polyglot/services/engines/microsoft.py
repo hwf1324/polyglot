@@ -44,6 +44,11 @@ class MicrosoftTranslateEngine(BaseHttpEngine):
 		return ""
 
 	@property
+	def max_request_length(self) -> int:
+		"""The Microsoft Edge translation API has a character limit per request."""
+		return 50000
+
+	@property
 	def default_target_language(self) -> str:
 		return "zh-Hans"  # Microsoft's code for Simplified Chinese
 
@@ -110,9 +115,9 @@ class MicrosoftTranslateEngine(BaseHttpEngine):
 			self._token_cache["expiry"] = 0
 			raise AuthenticationError(_("Could not get Microsoft Translator authentication token.")) from e
 
-	def translate(self, text: str, lang_from: str, lang_to: str, config: dict) -> dict:
+	def _translate_chunk(self, text: str, lang_from: str, lang_to: str, config: dict) -> dict:
 		"""
-		Overrides the base translate method to handle the two-step token authentication.
+		Overrides the base _translate_chunk method to handle the two-step token authentication.
 		"""
 		try:
 			# Step 1: Get the authentication token
