@@ -1,0 +1,3 @@
+[submodule "addon/websocketClientRepo"]
+	path = addon/websocketClientRepo
+	url = https://github.com/websocket-client/websocket-client.git
