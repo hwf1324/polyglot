@@ -17,6 +17,7 @@ from ..common import cues
 from ..common.cues import CueType
 
 OnSuccessCallback = Callable[[str], None] | None
+OnErrorCallback = Callable[[str], None] | None
 
 
 class TranslationManager:
@@ -241,6 +242,7 @@ class TranslationManager:
 		showStatus: bool = True,
 		allowCopy: bool = True,
 		onSuccess: OnSuccessCallback = None,
+		onError: OnErrorCallback = None,
 		langFrom: str | None = None,
 		langTo: str | None = None,
 	) -> None:
@@ -295,6 +297,7 @@ class TranslationManager:
 				isManual=isManual,
 				allowCopy=allowCopy,
 				onSuccess=onSuccess,
+				onError=onError,
 			)
 			return
 		if isManual and showStatus:
@@ -306,7 +309,7 @@ class TranslationManager:
 
 		def callback(result: dict[str, Any]) -> None:
 			self._onTranslationComplete(
-				result, isManual=isManual, allowCopy=allowCopy, onSuccess=onSuccess
+				result, isManual=isManual, allowCopy=allowCopy, onSuccess=onSuccess, onError=onError
 			)
 
 		task = TranslationTask(
@@ -323,7 +326,8 @@ class TranslationManager:
 		task.start()
 
 	def _onTranslationComplete(
-		self, result: dict[str, Any], isManual: bool, allowCopy: bool, onSuccess: OnSuccessCallback
+		self, result: dict[str, Any], isManual: bool, allowCopy: bool,
+		onSuccess: OnSuccessCallback, onError: OnErrorCallback = None,
 	) -> None:
 		cues.stopPeriodicCue()
 
@@ -337,6 +341,8 @@ class TranslationManager:
 					else f"{prefix}{_('An unknown error occurred')}"
 				)
 				cues.Speech.message(errorMessage)
+				if onError:
+					onError(errorMessage)
 				if not isManual:
 					self.consecutiveFailures += 1
 					if self.consecutiveFailures >= 3:

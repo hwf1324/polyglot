@@ -256,14 +256,24 @@ class InteractiveTranslationDialog(DPIScaledDialog):
 		self.resultTextCtrl.SetFocus()
 		self.translateBtn.Disable()
 		
-		def callback(resultText):
+		def onSuccess(resultText):
 			wx.CallAfter(self.onTranslationDone, resultText)
 
-		self.manager.requestTranslation(text, onSuccess=callback, showStatus=True)
+		def onError(errorMessage):
+			wx.CallAfter(self.onTranslationError, errorMessage)
+
+		self.manager.requestTranslation(
+			text, onSuccess=onSuccess, onError=onError, showStatus=True
+		)
 
 	def onTranslationDone(self, resultText):
 		self.translateBtn.Enable()
 		self.resultTextCtrl.SetValue(resultText)
+		self.resultTextCtrl.SetFocus()
+
+	def onTranslationError(self, errorMessage: str) -> None:
+		self.translateBtn.Enable()
+		self.resultTextCtrl.SetValue(errorMessage)
 		self.resultTextCtrl.SetFocus()
 
 	def onCopy(self, event):
