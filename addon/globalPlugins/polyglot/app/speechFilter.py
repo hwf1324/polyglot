@@ -41,9 +41,12 @@ class SpeechFilter:
 		# Extract the text from the speech sequence.
 		textToSave = " ".join([s for s in sequence if isinstance(s, str) and s.strip()])
 		# Save the text unless suppression was requested by the cues module.
+		# Suppressed speech is internal plugin messaging and should also
+		# bypass auto-translate interception to avoid being swallowed.
 		if textToSave:
 			if self._suppressCapture > 0:
 				self._suppressCapture -= 1
+				return sequence
 			else:
 				self.lastSpokenText = textToSave
 		if not self.manager.isAutoTranslateEnabled:
