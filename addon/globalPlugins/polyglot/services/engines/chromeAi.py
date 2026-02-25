@@ -18,7 +18,6 @@ from logHandler import log
 
 from ...common.exceptions import EngineError
 from ...common import cues
-from ...common.cues import CueType
 from ..engine import TranslationEngine
 from ..cdpBridge import CdpBridge, CdpError
 
@@ -219,6 +218,11 @@ class ChromeAiEngine(TranslationEngine):
 					}}
 					if (avail === 'downloadable') {{
 						console.log('[DOWNLOAD_START]');
+						options.monitor = (m) => {{
+							m.addEventListener('downloadprogress', (e) => {{
+								console.log('[DOWNLOAD_PROGRESS]' + Math.round(e.loaded * 100));
+							}});
+						}};
 					}}
 					globalThis._aiTranslators[key] = await Translator.create(options);
 					if (avail === 'downloadable') {{
@@ -237,11 +241,16 @@ class ChromeAiEngine(TranslationEngine):
 
 		def onConsoleLog(logText: str) -> None:
 			"""Handle model download progress events from Chrome's console output."""
-			if "[DOWNLOAD_START]" in logText:
+			if "[DOWNLOAD_PROGRESS]" in logText:
+				try:
+					pct = int(logText.replace("[DOWNLOAD_PROGRESS]", ""))
+					cues.Beep.playProgress(pct, 100)
+				except ValueError:
+					pass
+			elif "[DOWNLOAD_START]" in logText:
 				log.info("Chrome AI: model download started")
 				with self._downloadLock:
 					ChromeAiEngine._isDownloading = True
-				cues.Beep.startPeriodic(CueType.WAITING, 800, 0)
 				queueHandler.queueFunction(
 					queueHandler.eventQueue,
 					cues.Speech.message,
@@ -249,7 +258,6 @@ class ChromeAiEngine(TranslationEngine):
 				)
 			elif "[DOWNLOAD_END]" in logText:
 				log.info("Chrome AI: model download complete")
-				cues.stopPeriodicCue()
 				with self._downloadLock:
 					ChromeAiEngine._isDownloading = False
 				queueHandler.queueFunction(
@@ -266,7 +274,6 @@ class ChromeAiEngine(TranslationEngine):
 			raise EngineError(_("Unexpected Chrome AI error: ") + str(e))
 		finally:
 			if ChromeAiEngine._isDownloading:
-				cues.stopPeriodicCue()
 				with self._downloadLock:
 					ChromeAiEngine._isDownloading = False
 		if isCancelled and isCancelled():
