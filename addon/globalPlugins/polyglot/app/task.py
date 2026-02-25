@@ -89,7 +89,7 @@ class TranslationTask(threading.Thread):
 						return
 					result.update(secondResult)
 			finalTranslation = result.get("translation")
-			if finalTranslation and isinstance(finalTranslation, str):
+			if finalTranslation and isinstance(finalTranslation, str) and not result.get("noCache"):
 				sourceLangForCache = langDetected or self.langFrom
 				if sourceLangForCache != autoDetectCode:
 					if isinstance(sourceLangForCache, str):
