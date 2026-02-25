@@ -1,5 +1,12 @@
-# -*- coding: utf-8 -*-
+import os
+import sys
 
+# Load websocket-client submodule
+_ADDON_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_WEBSOCKET_CLIENT_PATH = os.path.join(_ADDON_DIR, "websocketClientRepo")
+if _WEBSOCKET_CLIENT_PATH not in sys.path:
+    # Insert at priority 1 to keep current dir at 0, but override other global packages
+    sys.path.insert(1, _WEBSOCKET_CLIENT_PATH)
 
 import addonHandler
 import api
@@ -23,6 +30,7 @@ from .common import cues
 from .common.config import CONF_SECTION
 from .configspec import configSpec
 from .services import engineManager
+from .services.cdpBridge import CdpBridge
 from .views import factory as uiFactory
 from .views import settings
 from .views.interactiveDialog import InteractiveTranslationDialog
@@ -81,6 +89,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def terminate(self):
 		self.manager.terminateAllTasks()
 		self.speechFilter.unregister()
+		CdpBridge.getInstance().terminate()
 		if not globalVars.appArgs.secure:
 			if settings.TranslationSettingsPanel in gui.settingsDialogs.NVDASettingsDialog.categoryClasses:
 				gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(

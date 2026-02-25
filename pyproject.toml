@@ -38,6 +38,8 @@ ignore = [
 # sconstruct contains many inbuilt functions not recognised by the lint,
 # so ignore F821.
 "sconstruct" = ["F821"]
+# Importing websocketClient is required
+"addon/globalPlugins/polyglot/__init__.py" = ["E402"]
 
 [tool.pyright]
 pythonPlatform = "Windows"
