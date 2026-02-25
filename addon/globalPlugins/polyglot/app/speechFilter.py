@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import time
 from typing import Any
 
 import ui
@@ -15,6 +16,7 @@ class SpeechFilter:
 	lastSpokenText: str
 	_isSpeakingTranslation: bool
 	_suppressCapture: int
+	_gracePeriodEnd: float
 
 	def __init__(self, manager: TranslationManager) -> None:
 		super().__init__()
@@ -22,6 +24,7 @@ class SpeechFilter:
 		self.lastSpokenText = ""
 		self._isSpeakingTranslation = False
 		self._suppressCapture = 0
+		self._gracePeriodEnd = 0.0
 
 	def register(self) -> None:
 		"""Registers the speech filter and the cue suppression hook."""
@@ -37,6 +40,16 @@ class SpeechFilter:
 		"""Prevents the next speech sequence from being captured as spoken text."""
 		self._suppressCapture += 1
 
+	def setGracePeriod(self, durationMs: int = 300) -> None:
+		"""Temporarily prevents speech from overwriting ``lastSpokenText``.
+
+		Called when entering the command layer.  Releasing modifier keys
+		(e.g. Shift from NVDA+Shift+T) may trigger IME or keyboard-layout
+		switch notifications that would otherwise overwrite the text the
+		user intends to translate.
+		"""
+		self._gracePeriodEnd = time.monotonic() + durationMs / 1000.0
+
 	def onSpeechSequence(self, sequence: list[Any]) -> list[Any]:
 		# Extract the text from the speech sequence.
 		textToSave = " ".join([s for s in sequence if isinstance(s, str) and s.strip()])
@@ -46,6 +59,9 @@ class SpeechFilter:
 		if textToSave:
 			if self._suppressCapture > 0:
 				self._suppressCapture -= 1
+				return sequence
+			elif time.monotonic() < self._gracePeriodEnd:
+				# Inside the grace window; pass through without overwriting lastSpokenText.
 				return sequence
 			else:
 				self.lastSpokenText = textToSave

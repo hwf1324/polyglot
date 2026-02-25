@@ -119,6 +119,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if self.isLayerActive:
 			self.script_layerError(gesture)
 			return
+		self.speechFilter.setGracePeriod()
 		self.bindGestures(self.__layerGestures)
 		self.isLayerActive = True
 		tones.beep(100, 10)
