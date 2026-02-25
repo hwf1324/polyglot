@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'polyglot' '0.1.0'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-02-24 15:54+0800\n"
-"PO-Revision-Date: 2026-02-24 16:11+0800\n"
+"POT-Creation-Date: 2026-02-26 05:27+0800\n"
+"PO-Revision-Date: 2026-02-26 05:34+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -29,141 +29,141 @@ msgstr "Polyglot"
 msgid "Enter translation command layer"
 msgstr "进入翻译命令层"
 
-#: addon\globalPlugins\polyglot\__init__.py:131
+#: addon\globalPlugins\polyglot\__init__.py:132
 msgid "Nothing selected"
 msgstr "未选择任何内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:136
+#: addon\globalPlugins\polyglot\__init__.py:137
 msgid "Cannot get selected text from the current object"
 msgstr "无法从当前对象获取选中文本"
 
-#: addon\globalPlugins\polyglot\__init__.py:162
+#: addon\globalPlugins\polyglot\__init__.py:163
 msgid "Next source language"
 msgstr "下一个源语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:167
+#: addon\globalPlugins\polyglot\__init__.py:168
 msgid "Previous source language"
 msgstr "上一个源语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:172
+#: addon\globalPlugins\polyglot\__init__.py:173
 msgid "Next target language"
 msgstr "下一个目标语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:177
+#: addon\globalPlugins\polyglot\__init__.py:178
 msgid "Previous target language"
 msgstr "上一个目标语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:188
+#: addon\globalPlugins\polyglot\__init__.py:189
 msgid "Next translation engine"
 msgstr "下一个翻译引擎"
 
-#: addon\globalPlugins\polyglot\__init__.py:193
+#: addon\globalPlugins\polyglot\__init__.py:194
 msgid "Previous translation engine"
 msgstr "上一个翻译引擎"
 
-#: addon\globalPlugins\polyglot\__init__.py:198
+#: addon\globalPlugins\polyglot\__init__.py:199
 msgid "Swap source and target languages"
 msgstr "交换源语言和目标语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:206
+#: addon\globalPlugins\polyglot\__init__.py:207
 msgid "Announce current engine and languages"
 msgstr "播报当前引擎和翻译语言方向"
 
-#: addon\globalPlugins\polyglot\__init__.py:212
+#: addon\globalPlugins\polyglot\__init__.py:213
 msgid "Copy last translation to clipboard"
 msgstr "复制上次翻译结果到剪贴板"
 
-#: addon\globalPlugins\polyglot\__init__.py:218
+#: addon\globalPlugins\polyglot\__init__.py:219
 msgid "No translation result to copy"
 msgstr "没有可复制的翻译结果"
 
-#: addon\globalPlugins\polyglot\__init__.py:220
+#: addon\globalPlugins\polyglot\__init__.py:221
 msgid "Open interactive translation dialog"
 msgstr "打开交互式翻译对话框"
 
-#: addon\globalPlugins\polyglot\__init__.py:233
+#: addon\globalPlugins\polyglot\__init__.py:234
 msgid "Open settings"
 msgstr "打开设置"
 
-#: addon\globalPlugins\polyglot\__init__.py:241
+#: addon\globalPlugins\polyglot\__init__.py:242
 msgid "Toggle auto-translation"
 msgstr "切换自动翻译"
 
-#: addon\globalPlugins\polyglot\__init__.py:244
+#: addon\globalPlugins\polyglot\__init__.py:245
 msgid "Auto-translation enabled"
 msgstr "自动翻译已开启"
 
-#: addon\globalPlugins\polyglot\__init__.py:244
+#: addon\globalPlugins\polyglot\__init__.py:245
 msgid "Auto-translation disabled"
 msgstr "自动翻译已关闭"
 
-#: addon\globalPlugins\polyglot\__init__.py:246
+#: addon\globalPlugins\polyglot\__init__.py:247
 msgid "Clear cache"
 msgstr "清除缓存"
 
-#: addon\globalPlugins\polyglot\__init__.py:249
+#: addon\globalPlugins\polyglot\__init__.py:250
 msgid "Cache cleared"
 msgstr "缓存已清除"
 
-#: addon\globalPlugins\polyglot\__init__.py:251
+#: addon\globalPlugins\polyglot\__init__.py:252
 msgid "Translate selection"
 msgstr "翻译选中内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:256
+#: addon\globalPlugins\polyglot\__init__.py:257
 msgid "Translate selection (reversed direction)"
 msgstr "反向翻译选中内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:261
+#: addon\globalPlugins\polyglot\__init__.py:262
 msgid "Translate clipboard"
 msgstr "翻译剪贴板"
 
-#: addon\globalPlugins\polyglot\__init__.py:264
-#: addon\globalPlugins\polyglot\__init__.py:271
+#: addon\globalPlugins\polyglot\__init__.py:265
+#: addon\globalPlugins\polyglot\__init__.py:272
 msgid "Clipboard is empty"
 msgstr "剪贴板为空"
 
-#: addon\globalPlugins\polyglot\__init__.py:268
+#: addon\globalPlugins\polyglot\__init__.py:269
 msgid "Translate clipboard (reversed direction)"
 msgstr "反向翻译剪贴板"
 
-#: addon\globalPlugins\polyglot\__init__.py:275
+#: addon\globalPlugins\polyglot\__init__.py:276
 msgid "Translate last spoken text"
 msgstr "翻译最后朗读的内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:278
-#: addon\globalPlugins\polyglot\__init__.py:285
+#: addon\globalPlugins\polyglot\__init__.py:279
+#: addon\globalPlugins\polyglot\__init__.py:286
 msgid "No last spoken text"
 msgstr "没有最后朗读的内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:282
+#: addon\globalPlugins\polyglot\__init__.py:283
 msgid "Translate last spoken text (reversed direction)"
 msgstr "反向翻译最后朗读的内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:289
+#: addon\globalPlugins\polyglot\__init__.py:290
 msgid "Show command layer help"
 msgstr "显示命令层帮助"
 
-#: addon\globalPlugins\polyglot\__init__.py:293
+#: addon\globalPlugins\polyglot\__init__.py:294
 msgid "Polyglot Help"
 msgstr "Polyglot 帮助"
 
-#: addon\globalPlugins\polyglot\__init__.py:301
+#: addon\globalPlugins\polyglot\__init__.py:302
 msgid "Translation Actions"
 msgstr "翻译操作"
 
-#: addon\globalPlugins\polyglot\__init__.py:306
+#: addon\globalPlugins\polyglot\__init__.py:307
 msgid "Configuration & Switching"
 msgstr "配置和切换"
 
-#: addon\globalPlugins\polyglot\__init__.py:312
+#: addon\globalPlugins\polyglot\__init__.py:313
 msgid "Tools & System"
 msgstr "工具和系统"
 
-#: addon\globalPlugins\polyglot\__init__.py:328
+#: addon\globalPlugins\polyglot\__init__.py:329
 msgid "Key"
 msgstr "按键"
 
-#: addon\globalPlugins\polyglot\__init__.py:328
+#: addon\globalPlugins\polyglot\__init__.py:329
 msgid "Action"
 msgstr "操作"
 
@@ -238,6 +238,11 @@ msgstr "发生未知错误"
 #: addon\globalPlugins\polyglot\app\manager.py:355
 msgid "Auto-translation disabled due to repeated failures."
 msgstr "自动翻译因连续失败已被禁用。"
+
+#: addon\globalPlugins\polyglot\common\cues.py:167
+#, python-format
+msgid "%d percent"
+msgstr "百分之 %d"
 
 #. --- Special Codes ---
 #: addon\globalPlugins\polyglot\common\languages.py:15
@@ -1342,7 +1347,7 @@ msgid "Translation &engine:"
 msgstr "翻译引擎(&E)："
 
 #: addon\globalPlugins\polyglot\views\interactiveDialog.py:37
-#: addon\globalPlugins\polyglot\views\settings.py:182
+#: addon\globalPlugins\polyglot\views\settings.py:188
 msgid "Current Engine Settings"
 msgstr "当前引擎设置"
 
@@ -1396,15 +1401,22 @@ msgstr "通用设置"
 msgid "Copy manual translation results to clipboard"
 msgstr "将手动翻译结果复制到剪贴板"
 
-#: addon\globalPlugins\polyglot\views\settings.py:68
+#: addon\globalPlugins\polyglot\views\settings.py:69
+msgid ""
+"Enable smart speech filter (skips non-translatable text like roles, states, "
+"location and other formatting information)"
+msgstr ""
+"启用智能语音过滤（忽略无需翻译的文本，例如角色、状态、位置和其他格式信息）"
+
+#: addon\globalPlugins\polyglot\views\settings.py:71
 msgid "Clear Cache"
 msgstr "清除缓存"
 
-#: addon\globalPlugins\polyglot\views\settings.py:187
+#: addon\globalPlugins\polyglot\views\settings.py:193
 msgid "This engine requires no additional configuration."
 msgstr "此引擎无需额外配置。"
 
-#: addon\globalPlugins\polyglot\views\settings.py:272
+#: addon\globalPlugins\polyglot\views\settings.py:279
 #, python-brace-format
 msgid "Clear Cache (Items: {})"
 msgstr "清除缓存 (条目数：{})"
