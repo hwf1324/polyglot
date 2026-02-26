@@ -18,13 +18,13 @@ from logHandler import log
 
 from ...common.exceptions import EngineError
 from ...common import cues
-from ..engine import TranslationEngine
+from ..engine import ChunkedTranslationMixin
 from ..cdpBridge import CdpBridge, CdpError
 
 addonHandler.initTranslation()
 
 
-class ChromeAiEngine(TranslationEngine):
+class ChromeAiEngine(ChunkedTranslationMixin):
 	id = "chrome_ai"
 	name = _("Chrome AI (Offline)")
 	_downloadLock = threading.Lock()
@@ -54,10 +54,6 @@ class ChromeAiEngine(TranslationEngine):
 	@property
 	def autoDetectCode(self) -> str | None:
 		return "auto"
-
-	@property
-	def reportsDetectedLanguage(self) -> bool:
-		return True
 
 	@property
 	def defaultSourceLanguage(self) -> str:
@@ -140,6 +136,15 @@ class ChromeAiEngine(TranslationEngine):
 	def getSupportedLanguages(self) -> dict[str, str]:
 		return self._supportedLangs
 
+	@property
+	def maxRequestLength(self) -> int:
+		return 3000
+
+	@property
+	def requestDelayRange(self) -> tuple[float, float]:
+		# Local model, no need for delay between chunks
+		return (0, 0)
+
 	def translate(
 		self,
 		text: str,
@@ -167,8 +172,13 @@ class ChromeAiEngine(TranslationEngine):
 			self._bridge.ensureConnection()
 		except CdpError as e:
 			raise EngineError(str(e))
-		if isCancelled and isCancelled():
-			return {}
+		
+		# Now that pre-checks and connection are established, let the base class handle splitting
+		return super().translate(text, langFrom, langTo, config, isCancelled)
+
+	def _translateChunk(
+		self, text: str, langFrom: str, langTo: str, config: dict[str, Any]
+	) -> dict[str, Any]:
 		# Escape for JS template literal
 		safeText = text.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${")
 		jsPayload = f"""
@@ -233,8 +243,7 @@ class ChromeAiEngine(TranslationEngine):
 				return JSON.stringify({{code: 'SUCCESS', data: result, detectedLang: detectedLang}});
 			}} catch (err) {{
 				delete globalThis._aiTranslators[key];
-				return JSON.stringify({{code: 'RUNTIME_EXCEPTION', message: err.toString(),
-					detectedLang: detectedLang, pair: key}});
+				return JSON.stringify({{code: 'TRANSLATE_ERR_EXCEPTION', message: err.toString()}});
 			}}
 		}})();
 		"""
@@ -277,8 +286,9 @@ class ChromeAiEngine(TranslationEngine):
 			if ChromeAiEngine._isDownloading:
 				with self._downloadLock:
 					ChromeAiEngine._isDownloading = False
-		if isCancelled and isCancelled():
-			return {}
+		return self._parseCdpResult(result, text)
+
+	def _parseCdpResult(self, result: dict[str, Any], text: str) -> dict[str, Any]:
 		code = result.get("code")
 		detectedLang = result.get("detectedLang")
 		log.debug(f"Chrome AI: JS returned code={code}, detectedLang={detectedLang}")
@@ -314,7 +324,7 @@ class ChromeAiEngine(TranslationEngine):
 			raise EngineError(
 				_("Language pair {pair} is not supported by Chrome's offline models.").format(pair=pair)
 			)
-		elif code == "RUNTIME_EXCEPTION":
+		elif code == "TRANSLATE_ERR_EXCEPTION":
 			raise EngineError(_("Chrome AI error: ") + result.get('message', _('Unknown error')))
 		else:
 			raise EngineError(_("Unexpected response from Chrome AI."))
