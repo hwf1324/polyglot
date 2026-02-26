@@ -176,33 +176,35 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 		# Now that pre-checks and connection are established, let the base class handle splitting
 		return super().translate(text, langFrom, langTo, config, isCancelled)
 
-	def _onDownloadProgress(self, logText: str) -> None:
-		"""Handle model download progress events from Chrome's console output."""
-		if "[DOWNLOAD_PROGRESS]" in logText:
-			try:
-				pct = int(logText.replace("[DOWNLOAD_PROGRESS]", ""))
-				cues.Beep.reportProgress(pct, 100)
-			except ValueError:
-				pass
-		elif "[DOWNLOAD_START]" in logText:
-			cues.Beep.resetProgress()
-			log.info("Chrome AI: model download started")
-			with self._downloadLock:
-				ChromeAiEngine._isDownloading = True
-			queueHandler.queueFunction(
-				queueHandler.eventQueue,
-				cues.Speech.message,
-				_("Translation model downloading..."),
-			)
-		elif "[DOWNLOAD_END]" in logText:
-			log.info("Chrome AI: model download complete")
-			with self._downloadLock:
-				ChromeAiEngine._isDownloading = False
-			queueHandler.queueFunction(
-				queueHandler.eventQueue,
-				cues.Speech.message,
-				_("Download complete."),
-			)
+	def _makeDownloadHandler(self, modelLabel: str) -> Callable[[str], None]:
+		def handler(logText: str) -> None:
+			if "[DOWNLOAD_PROGRESS]" in logText:
+				try:
+					pct = int(logText.replace("[DOWNLOAD_PROGRESS]", ""))
+					cues.Beep.reportProgress(pct, 100)
+				except ValueError:
+					pass
+			elif "[DOWNLOAD_START]" in logText:
+				cues.Beep.resetProgress()
+				log.info(f"Chrome AI: {modelLabel} download started")
+				with self._downloadLock:
+					ChromeAiEngine._isDownloading = True
+				queueHandler.queueFunction(
+					queueHandler.eventQueue,
+					cues.Speech.message,
+					# Translators: {model} is a model name like "Translation model" or "Language detection model".
+					_("{model} downloading...").format(model=modelLabel),
+				)
+			elif "[DOWNLOAD_END]" in logText:
+				log.info(f"Chrome AI: {modelLabel} download complete")
+				with self._downloadLock:
+					ChromeAiEngine._isDownloading = False
+				queueHandler.queueFunction(
+					queueHandler.eventQueue,
+					cues.Speech.message,
+					_("Download complete."),
+				)
+		return handler
 
 	def _detectLanguage(self, text: str) -> dict[str, str | None]:
 		"""Detect the source language via a separate CDP call.
@@ -247,7 +249,10 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 		}})();
 		"""
 		try:
-			result = self._bridge.evaluateSync(jsPayload, onConsoleLog=self._onDownloadProgress)
+			result = self._bridge.evaluateSync(
+				jsPayload,
+				onConsoleLog=self._makeDownloadHandler(_("Language detection model")),
+			)
 		except CdpError as e:
 			raise EngineError(str(e))
 		finally:
@@ -320,7 +325,10 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 		}})();
 		"""
 		try:
-			result = self._bridge.evaluateSync(jsPayload, onConsoleLog=self._onDownloadProgress)
+			result = self._bridge.evaluateSync(
+				jsPayload,
+				onConsoleLog=self._makeDownloadHandler(_("Translation model")),
+			)
 		except CdpError as e:
 			raise EngineError(str(e))
 		except Exception as e:
