@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'polyglot' '0.1.0'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-02-26 05:27+0800\n"
-"PO-Revision-Date: 2026-02-26 05:34+0800\n"
+"POT-Creation-Date: 2026-03-21 13:38+0800\n"
+"PO-Revision-Date: 2026-03-21 13:44+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 
 #. Add-on summary/title, usually the user visible name of the add-on
 #. Translators: Summary/title for this add-on
@@ -765,47 +765,47 @@ msgstr "本月翻译配额已用尽。"
 msgid "Service returned an error: {code} {reason}. Details: {details}"
 msgstr "服务返回错误：{code} {reason}。详情：{details}"
 
-#: addon\globalPlugins\polyglot\services\engine.py:142
+#: addon\globalPlugins\polyglot\services\engine.py:205
 #: addon\globalPlugins\polyglot\views\interactiveDialog.py:34
 msgid "Source language:"
 msgstr "源语言："
 
-#: addon\globalPlugins\polyglot\services\engine.py:149
+#: addon\globalPlugins\polyglot\services\engine.py:212
 #: addon\globalPlugins\polyglot\views\interactiveDialog.py:35
 msgid "Target language:"
 msgstr "目标语言："
 
-#: addon\globalPlugins\polyglot\services\engine.py:160
+#: addon\globalPlugins\polyglot\services\engine.py:223
 msgid "Proxy mode:"
 msgstr "代理模式："
 
-#: addon\globalPlugins\polyglot\services\engine.py:163
+#: addon\globalPlugins\polyglot\services\engine.py:226
 msgid "Use system proxy settings"
 msgstr "使用系统代理设置"
 
-#: addon\globalPlugins\polyglot\services\engine.py:164
+#: addon\globalPlugins\polyglot\services\engine.py:227
 msgid "Do not use proxy"
 msgstr "不使用代理"
 
-#: addon\globalPlugins\polyglot\services\engine.py:170
+#: addon\globalPlugins\polyglot\services\engine.py:233
 msgid "Request timeout:"
 msgstr "请求超时："
 
-#: addon\globalPlugins\polyglot\services\engine.py:186
+#: addon\globalPlugins\polyglot\services\engine.py:249
 msgid ""
 "Auto-swap if detected source matches target (source must be 'Auto-detect')"
 msgstr "当检测到的源语言与目标语言相同时自动交换 (源语言须为“自动检测”)"
 
-#: addon\globalPlugins\polyglot\services\engine.py:193
+#: addon\globalPlugins\polyglot\services\engine.py:256
 msgid "Swap to language:"
 msgstr "交换至语言："
 
-#: addon\globalPlugins\polyglot\services\engine.py:324
+#: addon\globalPlugins\polyglot\services\engine.py:338
 #: addon\globalPlugins\polyglot\services\engines\niutrans.py:195
 msgid "Failed to parse response from translation service."
 msgstr "无法解析翻译服务的响应。"
 
-#: addon\globalPlugins\polyglot\services\engine.py:329
+#: addon\globalPlugins\polyglot\services\engine.py:343
 #: addon\globalPlugins\polyglot\services\engines\microsoft.py:163
 #: addon\globalPlugins\polyglot\services\engines\niutrans.py:200
 msgid "An unknown error occurred during translation."
@@ -885,7 +885,9 @@ msgstr "需要 App ID 和 App Secret。"
 
 #: addon\globalPlugins\polyglot\services\engines\baidu.py:144
 #: addon\globalPlugins\polyglot\services\engines\tencent.py:164
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:89
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:110
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:97
 msgid "Unknown API error"
 msgstr "未知API错误"
 
@@ -997,6 +999,32 @@ msgstr "Google 翻译（免秘钥）"
 #: addon\globalPlugins\polyglot\services\engines\google.py:45
 msgid "Use mirror server (translate.googleapis.mirror.nvdadr.com)"
 msgstr "使用镜像服务器 (translate.googleapis.mirror.nvdadr.com)"
+
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:22
+msgid "Google Translate (Polyglot)"
+msgstr "Google 翻译 (Polyglot)"
+
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:145
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:107
+msgid "API Key"
+msgstr "API 密钥"
+
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:148
+msgid "Endpoint URL"
+msgstr "端点 URL"
+
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:159
+msgid "API Key for Google Translate (HQ) is not configured."
+msgstr "Google 翻译 (HQ) 的 API 密钥未配置。"
+
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:193
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:221
+msgid "Failed to parse API response."
+msgstr "无法解析API响应。"
+
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:202
+msgid "Invalid API response or no translation text included."
+msgstr "API 响应无效或未包含翻译文本。"
 
 #: addon\globalPlugins\polyglot\services\engines\lingva.py:28
 msgid "Lingva Translate"
@@ -1190,10 +1218,6 @@ msgstr "OpenRouter"
 msgid "Custom Model"
 msgstr "自定义模型"
 
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:107
-msgid "API Key"
-msgstr "API 密钥"
-
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:110
 #: addon\globalPlugins\polyglot\views\interactiveDialog.py:42
 msgid "Model:"
@@ -1226,10 +1250,6 @@ msgstr "未配置 OpenRouter API 密钥。"
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:172
 msgid "Custom model name is not specified."
 msgstr "未指定自定义模型名称。"
-
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:221
-msgid "Failed to parse API response."
-msgstr "无法解析API响应。"
 
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:265
 msgid "Invalid API response structure."
@@ -1279,6 +1299,42 @@ msgstr "美国东部(弗吉尼亚)"
 msgid "Secret ID and Secret Key must be provided."
 msgstr "必须提供 Secret ID 和 Secret Key。"
 
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:21
+msgid "Tencent Translate (Polyglot)"
+msgstr "腾讯翻译 (Polyglot)"
+
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:48
+#: addon\globalPlugins\polyglot\services\engines\vivo.py:54
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:56
+msgid "NVDACN Username"
+msgstr "NVDA中文站 用户名"
+
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:49
+#: addon\globalPlugins\polyglot\services\engines\vivo.py:55
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:57
+msgid "NVDACN Password"
+msgstr "NVDA中文站 密码"
+
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:58
+#: addon\globalPlugins\polyglot\services\engines\vivo.py:68
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:66
+msgid "NVDACN username and password must be provided in settings."
+msgstr "必须在设置中提供 NVDA中文站 的用户名和密码。"
+
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:86
+#: addon\globalPlugins\polyglot\services\engines\vivo.py:106
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:94
+msgid "API response successful but did not contain a translation result."
+msgstr "API 响应成功，但未包含翻译结果。"
+
+#. Translators: Error message when authentication with the translation service fails. {error} is the detailed error description.
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:92
+#: addon\globalPlugins\polyglot\services\engines\vivo.py:83
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:100
+#, python-brace-format
+msgid "Authentication failed: {error}"
+msgstr "认证失败: {error}"
+
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:20
 msgid "VIVO Translate"
 msgstr "VIVO 翻译"
@@ -1291,18 +1347,6 @@ msgstr "服务器异常"
 msgid "Invalid request parameters"
 msgstr "请求参数错误"
 
-#: addon\globalPlugins\polyglot\services\engines\vivo.py:54
-msgid "NVDACN Username"
-msgstr "NVDA中文站 用户名"
-
-#: addon\globalPlugins\polyglot\services\engines\vivo.py:55
-msgid "NVDACN Password"
-msgstr "NVDA中文站 密码"
-
-#: addon\globalPlugins\polyglot\services\engines\vivo.py:68
-msgid "NVDACN username and password must be provided in settings."
-msgstr "必须在设置中提供 NVDA中文站 的用户名和密码。"
-
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:78
 msgid ""
 "Could not connect to the NVDACN authentication server to get a signature. "
@@ -1310,19 +1354,13 @@ msgid ""
 msgstr ""
 "无法连接到 NVDACN 认证服务器以获取签名。请检查您的网络连接或稍后再试。"
 
-#. Translators: Error message when authentication with the translation service fails. {error} is the detailed error description.
-#: addon\globalPlugins\polyglot\services\engines\vivo.py:83
-#, python-brace-format
-msgid "Authentication failed: {error}"
-msgstr "认证失败: {error}"
-
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:85
 msgid "An unknown error occurred while generating authentication info."
 msgstr "生成认证信息时发生未知错误。"
 
-#: addon\globalPlugins\polyglot\services\engines\vivo.py:106
-msgid "API response successful but did not contain a translation result."
-msgstr "API 响应成功，但未包含翻译结果。"
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:21
+msgid "Volcengine (Polyglot)"
+msgstr "火山翻译 （Polyglot）"
 
 #: addon\globalPlugins\polyglot\services\engines\yandex.py:29
 msgid "Yandex Translate"
@@ -1436,23 +1474,8 @@ msgstr "初版发布。"
 #~ msgid "The current engine has no swappable languages."
 #~ msgstr "当前引擎无可交换的语言。"
 
-#~ msgid "Google Translate (HQ)"
-#~ msgstr "Google 翻译 (HQ)"
-
-#~ msgid "Endpoint URL"
-#~ msgstr "端点 URL"
-
-#~ msgid "API Key for Google Translate (HQ) is not configured."
-#~ msgstr "Google 翻译 (HQ) 的 API 密钥未配置。"
-
-#~ msgid "Invalid API response or no translation text included."
-#~ msgstr "API 响应无效或未包含翻译文本。"
-
 #~ msgid "Use HTTPS connection"
 #~ msgstr "使用 HTTPS 连接"
 
 #~ msgid "Tencent Translate (Web, key-free)"
 #~ msgstr "腾讯翻译 (网页版，免密钥)"
-
-#~ msgid "Volcengine (key-free)"
-#~ msgstr "火山翻译 （免密钥）"
