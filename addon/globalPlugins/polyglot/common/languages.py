@@ -114,6 +114,7 @@ ALL_LANGUAGES = {
 	"sd": _("Sindhi"),
 	"fa": _("Persian"),
 	"he": _("Hebrew"),
+	"iw": _("Hebrew"),  # Chrome Translator API
 	"tr": _("Turkish"),
 	"az": _("Azerbaijani"),
 	"hy": _("Armenian"),

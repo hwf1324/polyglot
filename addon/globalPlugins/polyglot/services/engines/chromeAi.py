@@ -18,7 +18,7 @@ import queueHandler
 from logHandler import log
 
 from ...common.exceptions import EngineError
-from ...common import cues
+from ...common import cues, languages
 from ..engine import ChunkedTranslationMixin
 from ..cdpBridge import CdpBridge, CdpError
 
@@ -35,23 +35,49 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 	def __init__(self) -> None:
 		super().__init__()
 		self._bridge = CdpBridge.getInstance()
-		self._supportedLangs = {
-			"auto": _("Auto-detect"),
-			"en": _("English"),
-			"zh": _("Chinese"),
-			"ja": _("Japanese"),
-			"ko": _("Korean"),
-			"fr": _("French"),
-			"de": _("German"),
-			"es": _("Spanish"),
-			"ru": _("Russian"),
-			"pt": _("Portuguese"),
-			"it": _("Italian"),
-			"ar": _("Arabic"),
-			"nl": _("Dutch"),
-			"hi": _("Hindi"),
-			"tr": _("Turkish"),
-		}
+		supportedCodes = [
+			"auto",
+			"ar",
+			"bg",
+			"bn",
+			"cs",
+			"da",
+			"de",
+			"el",
+			"en",
+			"es",
+			"fi",
+			"fr",
+			"hi",
+			"hr",
+			"hu",
+			"id",
+			"it",
+			"iw",
+			"ja",
+			"kn",
+			"ko",
+			"lt",
+			"mr",
+			"nl",
+			"no",
+			"pl",
+			"pt",
+			"ro",
+			"ru",
+			"sk",
+			"sl",
+			"sv",
+			"ta",
+			"te",
+			"th",
+			"tr",
+			"uk",
+			"vi",
+			"zh",
+			"zh-Hant",
+		]
+		self._supportedLangs = languages.getLanguageDictForCodes(supportedCodes)
 
 	@property
 	def autoDetectCode(self) -> str | None:
