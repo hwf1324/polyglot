@@ -9,10 +9,10 @@ evaluateSync call uses a unique, atomically-incremented message ID.
 
 import json
 import os
-import socket
 import subprocess
 import threading
 import time
+import urllib.parse
 import urllib.request
 import winreg
 from typing import Any
@@ -24,17 +24,15 @@ from logHandler import log
 import websocket
 
 
-DEBUG_PORT = 9222
 USER_DATA_DIR = os.path.join(globalVars.appArgs.configPath, "polyglot_chrome_ai")
+DEVTOOLS_ACTIVE_PORT_FILE = os.path.join(USER_DATA_DIR, "DevToolsActivePort")
+PAGE_URL = "about:blank"
 
 
 class CdpError(Exception):
+	"""Raised when Chrome DevTools Protocol communication fails."""
+
 	pass
-
-
-def _isPortInUse(port: int) -> bool:
-	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-		return s.connect_ex(("127.0.0.1", port)) == 0
 
 
 class CdpBridge:
@@ -44,19 +42,23 @@ class CdpBridge:
 	_wsLock = threading.Lock()
 	_nextMsgId = 0
 	_msgIdLock = threading.Lock()
+	_debugPort: int | None = None
 
 	@classmethod
 	def getInstance(cls) -> "CdpBridge":
+		"""Returns the singleton CDP bridge instance."""
 		if cls._instance is None:
 			cls._instance = CdpBridge()
 		return cls._instance
 
 	def _allocateMsgId(self) -> int:
+		"""Returns a unique CDP command message ID."""
 		with self._msgIdLock:
 			self._nextMsgId += 1
 			return self._nextMsgId
 
 	def _getChromePath(self) -> str:
+		"""Finds Chrome's executable path from Windows App Paths registration."""
 		regPaths = [
 			(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe"),
 			(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe"),
@@ -72,32 +74,27 @@ class CdpBridge:
 		return ""
 
 	def startBrowser(self) -> None:
+		"""Starts the managed headless Chrome instance if it is not already running."""
 		if self._chromeProcess and self._chromeProcess.poll() is None:
 			return
-		if _isPortInUse(DEBUG_PORT):
-			log.info(f"Port {DEBUG_PORT} already in use, attempting to reuse existing Chrome instance.")
-			try:
-				wsUrl = self._getWebSocketUrl()
-				if wsUrl:
-					log.info("Reusing existing Chrome CDP endpoint.")
-					return
-			except CdpError:
-				log.warning(f"Port {DEBUG_PORT} occupied but CDP unreachable.")
-				raise CdpError(
-					f"Port {DEBUG_PORT} is occupied by another process. "
-					"Please close it or restart NVDA."
-				)
+		self._debugPort = None
 		chromePath = self._getChromePath()
 		if not chromePath:
 			raise CdpError("Chrome not found. Please install Google Chrome.")
 		os.makedirs(USER_DATA_DIR, exist_ok=True)
+		try:
+			os.remove(DEVTOOLS_ACTIVE_PORT_FILE)
+		except FileNotFoundError:
+			pass
+		except OSError:
+			log.warning("Could not remove stale Chrome DevToolsActivePort file.", exc_info=True)
 		log.info(f"Launching Chrome Headless: {chromePath}")
 		try:
 			self._chromeProcess = subprocess.Popen(
 				[
 					chromePath,
 					"--headless=new",
-					f"--remote-debugging-port={DEBUG_PORT}",
+					"--remote-debugging-port=0",
 					f"--user-data-dir={USER_DATA_DIR}",
 					"--remote-allow-origins=*",
 					"--enable-features=TranslationAPI",
@@ -105,6 +102,7 @@ class CdpBridge:
 					"--mute-audio",
 					"--no-first-run",
 					"--no-default-browser-check",
+					PAGE_URL,
 				],
 				stdout=subprocess.DEVNULL,
 				stderr=subprocess.DEVNULL,
@@ -112,21 +110,62 @@ class CdpBridge:
 		except Exception as e:
 			raise CdpError(f"Failed to start Chrome: {e}")
 
+	def _getDebugPort(self) -> int:
+		"""Reads the ephemeral CDP port assigned to the managed Chrome process."""
+		if self._debugPort is not None:
+			return self._debugPort
+		for _ in range(40):
+			if self._chromeProcess and self._chromeProcess.poll() is not None:
+				raise CdpError(f"Chrome exited before CDP became available: {self._chromeProcess.returncode}")
+			try:
+				with open(DEVTOOLS_ACTIVE_PORT_FILE, "r", encoding="utf-8") as portFile:
+					firstLine = portFile.readline().strip()
+					if firstLine:
+						self._debugPort = int(firstLine)
+						return self._debugPort
+			except (FileNotFoundError, ValueError, OSError):
+				time.sleep(0.25)
+		raise CdpError("Timeout waiting for Chrome DevToolsActivePort.")
+
+	def _readJsonEndpoint(self, path: str, method: str = "GET") -> Any:
+		"""Reads a JSON response from the managed Chrome debugging HTTP endpoint."""
+		port = self._getDebugPort()
+		url = f"http://127.0.0.1:{port}{path}"
+		req = urllib.request.Request(url, method=method)
+		with urllib.request.urlopen(req, timeout=1) as response:
+			return json.loads(response.read().decode("utf-8"))
+
+	def _createPageTarget(self) -> str | None:
+		"""Creates a page target and returns its WebSocket URL if available."""
+		quotedUrl = urllib.parse.quote(PAGE_URL, safe="")
+		try:
+			target = self._readJsonEndpoint(f"/json/new?{quotedUrl}", method="PUT")
+		except Exception:
+			log.warning("Failed to create Chrome CDP page target.", exc_info=True)
+			return None
+		if isinstance(target, dict):
+			wsUrl = target.get("webSocketDebuggerUrl")
+			if isinstance(wsUrl, str):
+				return wsUrl
+		return None
+
 	def _getWebSocketUrl(self) -> str:
-		url = f"http://127.0.0.1:{DEBUG_PORT}/json"
+		"""Returns a page target WebSocket URL from the managed Chrome process."""
 		for _ in range(20):
 			try:
-				req = urllib.request.Request(url)
-				with urllib.request.urlopen(req, timeout=1) as response:
-					data = json.loads(response.read().decode("utf-8"))
-					pages = [t for t in data if t.get("type") == "page"]
-					if pages:
-						return pages[0]["webSocketDebuggerUrl"]
+				data = self._readJsonEndpoint("/json/list")
+				pages = [t for t in data if t.get("type") == "page"]
+				if pages:
+					return pages[0]["webSocketDebuggerUrl"]
+				wsUrl = self._createPageTarget()
+				if wsUrl:
+					return wsUrl
 			except Exception:
 				time.sleep(0.5)
 		raise CdpError("Timeout waiting for Chrome CDP endpoint.")
 
 	def ensureConnection(self) -> None:
+		"""Ensures that a Runtime-enabled WebSocket connection is ready."""
 		with self._wsLock:
 			if self._ws and self._ws.connected:
 				return
@@ -137,10 +176,25 @@ class CdpBridge:
 				self._ws = websocket.create_connection(wsUrl, timeout=300)
 				enableId = self._allocateMsgId()
 				self._ws.send(json.dumps({"id": enableId, "method": "Runtime.enable"}))
-				self._ws.recv()
+				while True:
+					response = json.loads(self._ws.recv())
+					if response.get("id") == enableId:
+						if "error" in response:
+							raise CdpError(f"CDP error: {response['error']}")
+						break
 				log.debug("CDP Runtime domain enabled.")
 			except Exception as e:
+				self._ws = None
 				raise CdpError(f"WebSocket connection failed: {e}")
+
+	def _formatExceptionDetails(self, exceptionDetails: dict[str, Any]) -> str:
+		"""Formats CDP Runtime exception details for logs and user-facing errors."""
+		text = exceptionDetails.get("text", "Runtime exception")
+		exception = exceptionDetails.get("exception", {})
+		description = exception.get("description") if isinstance(exception, dict) else None
+		if description:
+			return f"{text}: {description}"
+		return str(text)
 
 	def evaluateSync(
 		self,
@@ -184,6 +238,9 @@ class CdpBridge:
 						if response.get("id") == msgId:
 							if "error" in response:
 								raise CdpError(f"CDP error: {response['error']}")
+							exceptionDetails = response.get("result", {}).get("exceptionDetails")
+							if isinstance(exceptionDetails, dict):
+								raise CdpError(self._formatExceptionDetails(exceptionDetails))
 							resultValue = response.get("result", {}).get("result", {}).get("value", "{}")
 							if isinstance(resultValue, dict):
 								return resultValue
@@ -205,6 +262,7 @@ class CdpBridge:
 					raise CdpError(f"WebSocket error: {e}")
 
 	def terminate(self) -> None:
+		"""Closes the CDP connection and terminates the managed Chrome process."""
 		if self._ws:
 			try:
 				self._ws.close()
@@ -223,3 +281,4 @@ class CdpBridge:
 			except Exception:
 				pass
 			self._chromeProcess = None
+			self._debugPort = None
