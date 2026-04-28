@@ -18,6 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+      with:
+        submodules: recursive
 
     - run: echo -e "pre-commit\nscons\nmarkdown">requirements.txt
 
@@ -55,6 +57,8 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v5
+      with:
+        submodules: recursive
     - name: download releases files
       uses: actions/download-artifact@v6
     - name: Display structure of downloaded files
