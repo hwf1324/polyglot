@@ -108,6 +108,48 @@ Some engines expose additional controls:
 - `Google Translate (Polyglot)` exposes a configurable endpoint URL and API key field.
 - `Google Translate (key-free)` offers an optional mirror-server toggle.
 
+## Chrome AI Offline Translation
+
+Polyglot can use Chrome's built-in Translator API for offline translation. Translation is handled by an isolated local Chrome instance, so the text is not sent to a third-party translation service.
+
+### Requirements
+
+- Google Chrome must be installed.
+- Chrome 138 or later is recommended.
+- The first use of a language direction requires an internet connection to download the local translation model.
+
+### How To Use
+
+Select `Chrome AI (Offline)` in Polyglot settings, then choose the source and target languages.
+
+On first use, Chrome downloads the required model if it is not already available. Polyglot reports download progress according to NVDA's progress reporting settings. Once the download completes, translation continues automatically.
+
+### Network And Models
+
+Translation runs locally, but model downloads are managed by Chrome and still need access to Chrome's download service. In some network environments, downloads may be slow or fail.
+
+If a download fails, configure a system proxy, try again later, or switch to another translation engine. Polyglot does not provide model download URLs and does not manage model files manually.
+
+### Privacy And Data
+
+Polyglot uses a separate Chrome data directory for Chrome AI, so it does not affect your regular Chrome profile. Models, cache data, and runtime data are kept to avoid repeated downloads.
+
+The default location is:
+
+```text
+%LOCALAPPDATA%\Polyglot\ChromeAI
+```
+
+If the `LOCALAPPDATA` environment variable is not available, Polyglot falls back to the `polyglot_chrome_ai` directory under the NVDA configuration directory.
+
+When NVDA exits, Polyglot closes the Chrome instance it started.
+
+### Limitations
+
+- Supported languages and language pairs are determined by Chrome's Translator API.
+- First use requires a model download, which may be affected by network conditions.
+- If the Translator API is unavailable, update Chrome or make sure the related Chrome feature is enabled.
+
 ## Engine Overview
 
 The repository currently includes the following engines:
@@ -116,6 +158,7 @@ The repository currently includes the following engines:
 | --- | --- | --- |
 | `Baidu Translate` | Baidu app ID and secret | Standard vendor API integration. |
 | `Caiyun` | Caiyun token | Standard vendor API integration. |
+| `Chrome AI (Offline)` | None | Uses Chrome's built-in Translator API with local models; model download is required on first use. |
 | `DeepL` | DeepL API key | Standard vendor API integration. |
 | `Google Translate (key-free)` | None | Supports an optional mirror endpoint toggle. |
 | `Google Translate (Polyglot)` | Configurable API key and endpoint | Ships with default endpoint values in code; availability depends on service status. |
