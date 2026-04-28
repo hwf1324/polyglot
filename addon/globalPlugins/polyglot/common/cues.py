@@ -139,19 +139,16 @@ class Beep:
 	_lastSpeechPct: int = -100
 
 	@classmethod
-	def _getProgressPercent(cls, current: int, total: int) -> int | None:
-		"""Returns a clamped integer progress percentage, or None if progress is invalid."""
-		if total <= 1:
-			return None
-		current = max(0, min(current, total))
-		return int(current / total * 100)
+	def reportProgress(cls, current: int, total: int) -> None:
+		"""Reports progress respecting NVDA's progressBarOutputMode setting.
 
-	@classmethod
-	def _reportProgress(cls, current: int, total: int, allowSpeech: bool) -> None:
-		"""Reports progress according to NVDA progress settings."""
-		pct = cls._getProgressPercent(current, total)
-		if pct is None:
+		Beep feedback runs on any thread.
+		Speech feedback is scheduled to the main thread via queueHandler.
+		"""
+		if total <= 1:
 			return
+		current = max(0, min(current, total))
+		pct = int(current / total * 100)
 		pbConf = config.conf["presentation"]["progressBarUpdates"]
 		mode = pbConf["progressBarOutputMode"]
 		if mode == "off":
@@ -161,20 +158,30 @@ class Beep:
 				freq = int(pbConf["beepMinHZ"] * 2 ** (pct / 25.0))
 				tones.beep(freq, 40)
 				cls._lastBeepPct = pct
-		if allowSpeech and mode in ("speak", "both"):
+		if mode in ("speak", "both"):
 			if abs(pct - cls._lastSpeechPct) >= pbConf["speechPercentageInterval"]:
 				cls._lastSpeechPct = pct
-				Speech.queueMessage(_("%d percent") % pct)
-
-	@classmethod
-	def reportProgress(cls, current: int, total: int) -> None:
-		"""Reports progress respecting NVDA's progressBarOutputMode setting."""
-		cls._reportProgress(current, total, allowSpeech=True)
+				queueHandler.queueFunction(
+					queueHandler.eventQueue,
+					Speech.message,
+					_("%d percent") % pct,
+				)
 
 	@classmethod
 	def reportProgressBeepOnly(cls, current: int, total: int) -> None:
 		"""Reports progress with beeps only, respecting NVDA's beep progress settings."""
-		cls._reportProgress(current, total, allowSpeech=False)
+		if total <= 1:
+			return
+		current = max(0, min(current, total))
+		pct = int(current / total * 100)
+		pbConf = config.conf["presentation"]["progressBarUpdates"]
+		mode = pbConf["progressBarOutputMode"]
+		if mode not in ("beep", "both"):
+			return
+		if abs(pct - cls._lastBeepPct) >= pbConf["beepPercentageInterval"]:
+			freq = int(pbConf["beepMinHZ"] * 2 ** (pct / 25.0))
+			tones.beep(freq, 40)
+			cls._lastBeepPct = pct
 
 	@classmethod
 	def resetProgress(cls) -> None:
@@ -215,11 +222,6 @@ class Speech:
 		if suppressCapture and _onBeforeSpeech is not None:
 			_onBeforeSpeech()
 		ui.message(text)
-
-	@staticmethod
-	def queueMessage(text: str, suppressCapture: bool = True) -> None:
-		"""Queues speech from any thread through the main NVDA event queue."""
-		queueHandler.queueFunction(queueHandler.eventQueue, Speech.message, text, suppressCapture)
 
 
 # --- Speech Hook Registration ---

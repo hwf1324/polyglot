@@ -14,6 +14,7 @@ from typing import Any
 from collections.abc import Callable
 
 import addonHandler
+import queueHandler
 from logHandler import log
 
 from ...common.exceptions import EngineError
@@ -217,7 +218,9 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 				log.info(f"Chrome AI: {modelLabel} download started")
 				with self._downloadLock:
 					ChromeAiEngine._isDownloading = True
-				cues.Speech.queueMessage(
+				queueHandler.queueFunction(
+					queueHandler.eventQueue,
+					cues.Speech.message,
 					# Translators: {model} is a model name like "Translation model" or "Language detection model".
 					_("{model} downloading...").format(model=modelLabel),
 				)
@@ -225,7 +228,11 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 				log.info(f"Chrome AI: {modelLabel} download complete")
 				with self._downloadLock:
 					ChromeAiEngine._isDownloading = False
-				cues.Speech.queueMessage(_("Download complete."))
+				queueHandler.queueFunction(
+					queueHandler.eventQueue,
+					cues.Speech.message,
+					_("Download complete."),
+				)
 		return handler
 
 	def _toJsStringLiteral(self, value: str) -> str:
