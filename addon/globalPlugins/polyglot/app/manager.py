@@ -271,7 +271,9 @@ class TranslationManager:
 		if not currentEngine.isEnabled(engineConfig):
 			fallbackEngine = engineManager.getNextEnabledEngine(engineId)
 			if not fallbackEngine:
-				log.info(f"Selected engine '{engineId}' is disabled and no enabled fallback engine is available.")
+				log.info(
+					f"Selected engine '{engineId}' is disabled and no enabled fallback engine is available.",
+				)
 				error = EngineError(_("No enabled translation engines available."))
 				self._onTranslationComplete(
 					{"translation": None, "error": error},

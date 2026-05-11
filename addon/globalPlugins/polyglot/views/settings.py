@@ -260,7 +260,9 @@ class TranslationSettingsPanel(SettingsPanel):
 		enableSmartFilterCheckbox = getattr(self, "enableSmartFilterCheckbox", None)
 		self.uiModel = {
 			"engine": engineId,
-			"copyResult": copyResultCheckbox.IsChecked() if copyResultCheckbox else conf.get("copyResult", True),
+			"copyResult": copyResultCheckbox.IsChecked()
+			if copyResultCheckbox
+			else conf.get("copyResult", True),
 			"enableSmartFilter": enableSmartFilterCheckbox.IsChecked()
 			if enableSmartFilterCheckbox
 			else conf.get("enableSmartFilter", True),
