@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 'polyglot' '0.1.0'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-03-21 13:38+0800\n"
-"PO-Revision-Date: 2026-03-21 13:44+0800\n"
+"POT-Creation-Date: 2026-05-11 11:22+0800\n"
+"PO-Revision-Date: 2026-05-11 12:10+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -20,155 +20,155 @@ msgstr ""
 #. Add-on summary/title, usually the user visible name of the add-on
 #. Translators: Summary/title for this add-on
 #. to be shown on installation and add-on information found in add-on store
-#: addon\globalPlugins\polyglot\__init__.py:66
-#: addon\globalPlugins\polyglot\views\settings.py:21 buildVars.py:22
+#: addon\globalPlugins\polyglot\__init__.py:74
+#: addon\globalPlugins\polyglot\views\settings.py:21 buildVars.py:23
 msgid "Polyglot"
 msgstr "Polyglot"
 
-#: addon\globalPlugins\polyglot\__init__.py:117
+#: addon\globalPlugins\polyglot\__init__.py:126
 msgid "Enter translation command layer"
 msgstr "进入翻译命令层"
 
-#: addon\globalPlugins\polyglot\__init__.py:132
+#: addon\globalPlugins\polyglot\__init__.py:141
 msgid "Nothing selected"
 msgstr "未选择任何内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:137
+#: addon\globalPlugins\polyglot\__init__.py:146
 msgid "Cannot get selected text from the current object"
 msgstr "无法从当前对象获取选中文本"
 
-#: addon\globalPlugins\polyglot\__init__.py:163
+#: addon\globalPlugins\polyglot\__init__.py:172
 msgid "Next source language"
 msgstr "下一个源语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:168
+#: addon\globalPlugins\polyglot\__init__.py:178
 msgid "Previous source language"
 msgstr "上一个源语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:173
+#: addon\globalPlugins\polyglot\__init__.py:184
 msgid "Next target language"
 msgstr "下一个目标语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:178
+#: addon\globalPlugins\polyglot\__init__.py:190
 msgid "Previous target language"
 msgstr "上一个目标语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:189
+#: addon\globalPlugins\polyglot\__init__.py:202
 msgid "Next translation engine"
 msgstr "下一个翻译引擎"
 
-#: addon\globalPlugins\polyglot\__init__.py:194
+#: addon\globalPlugins\polyglot\__init__.py:208
 msgid "Previous translation engine"
 msgstr "上一个翻译引擎"
 
-#: addon\globalPlugins\polyglot\__init__.py:199
+#: addon\globalPlugins\polyglot\__init__.py:214
 msgid "Swap source and target languages"
 msgstr "交换源语言和目标语言"
 
-#: addon\globalPlugins\polyglot\__init__.py:207
+#: addon\globalPlugins\polyglot\__init__.py:223
 msgid "Announce current engine and languages"
 msgstr "播报当前引擎和翻译语言方向"
 
-#: addon\globalPlugins\polyglot\__init__.py:213
+#: addon\globalPlugins\polyglot\__init__.py:230
 msgid "Copy last translation to clipboard"
 msgstr "复制上次翻译结果到剪贴板"
 
-#: addon\globalPlugins\polyglot\__init__.py:219
+#: addon\globalPlugins\polyglot\__init__.py:236
 msgid "No translation result to copy"
 msgstr "没有可复制的翻译结果"
 
-#: addon\globalPlugins\polyglot\__init__.py:221
+#: addon\globalPlugins\polyglot\__init__.py:238
 msgid "Open interactive translation dialog"
 msgstr "打开交互式翻译对话框"
 
-#: addon\globalPlugins\polyglot\__init__.py:234
+#: addon\globalPlugins\polyglot\__init__.py:251
 msgid "Open settings"
 msgstr "打开设置"
 
-#: addon\globalPlugins\polyglot\__init__.py:242
+#: addon\globalPlugins\polyglot\__init__.py:259
 msgid "Toggle auto-translation"
 msgstr "切换自动翻译"
 
-#: addon\globalPlugins\polyglot\__init__.py:245
+#: addon\globalPlugins\polyglot\__init__.py:262
 msgid "Auto-translation enabled"
 msgstr "自动翻译已开启"
 
-#: addon\globalPlugins\polyglot\__init__.py:245
+#: addon\globalPlugins\polyglot\__init__.py:262
 msgid "Auto-translation disabled"
 msgstr "自动翻译已关闭"
 
-#: addon\globalPlugins\polyglot\__init__.py:247
+#: addon\globalPlugins\polyglot\__init__.py:264
 msgid "Clear cache"
 msgstr "清除缓存"
 
-#: addon\globalPlugins\polyglot\__init__.py:250
+#: addon\globalPlugins\polyglot\__init__.py:267
 msgid "Cache cleared"
 msgstr "缓存已清除"
 
-#: addon\globalPlugins\polyglot\__init__.py:252
+#: addon\globalPlugins\polyglot\__init__.py:269
 msgid "Translate selection"
 msgstr "翻译选中内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:257
+#: addon\globalPlugins\polyglot\__init__.py:274
 msgid "Translate selection (reversed direction)"
 msgstr "反向翻译选中内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:262
+#: addon\globalPlugins\polyglot\__init__.py:279
 msgid "Translate clipboard"
 msgstr "翻译剪贴板"
 
-#: addon\globalPlugins\polyglot\__init__.py:265
-#: addon\globalPlugins\polyglot\__init__.py:272
+#: addon\globalPlugins\polyglot\__init__.py:282
+#: addon\globalPlugins\polyglot\__init__.py:289
 msgid "Clipboard is empty"
 msgstr "剪贴板为空"
 
-#: addon\globalPlugins\polyglot\__init__.py:269
+#: addon\globalPlugins\polyglot\__init__.py:286
 msgid "Translate clipboard (reversed direction)"
 msgstr "反向翻译剪贴板"
 
-#: addon\globalPlugins\polyglot\__init__.py:276
+#: addon\globalPlugins\polyglot\__init__.py:293
 msgid "Translate last spoken text"
 msgstr "翻译最后朗读的内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:279
-#: addon\globalPlugins\polyglot\__init__.py:286
+#: addon\globalPlugins\polyglot\__init__.py:296
+#: addon\globalPlugins\polyglot\__init__.py:303
 msgid "No last spoken text"
 msgstr "没有最后朗读的内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:283
+#: addon\globalPlugins\polyglot\__init__.py:300
 msgid "Translate last spoken text (reversed direction)"
 msgstr "反向翻译最后朗读的内容"
 
-#: addon\globalPlugins\polyglot\__init__.py:290
+#: addon\globalPlugins\polyglot\__init__.py:307
 msgid "Show command layer help"
 msgstr "显示命令层帮助"
 
-#: addon\globalPlugins\polyglot\__init__.py:294
+#: addon\globalPlugins\polyglot\__init__.py:311
 msgid "Polyglot Help"
 msgstr "Polyglot 帮助"
 
-#: addon\globalPlugins\polyglot\__init__.py:302
+#: addon\globalPlugins\polyglot\__init__.py:320
 msgid "Translation Actions"
 msgstr "翻译操作"
 
-#: addon\globalPlugins\polyglot\__init__.py:307
+#: addon\globalPlugins\polyglot\__init__.py:331
 msgid "Configuration & Switching"
 msgstr "配置和切换"
 
-#: addon\globalPlugins\polyglot\__init__.py:313
+#: addon\globalPlugins\polyglot\__init__.py:344
 msgid "Tools & System"
 msgstr "工具和系统"
 
-#: addon\globalPlugins\polyglot\__init__.py:329
+#: addon\globalPlugins\polyglot\__init__.py:366
 msgid "Key"
 msgstr "按键"
 
-#: addon\globalPlugins\polyglot\__init__.py:329
+#: addon\globalPlugins\polyglot\__init__.py:366
 msgid "Action"
 msgstr "操作"
 
 #: addon\globalPlugins\polyglot\app\manager.py:63
-#: addon\globalPlugins\polyglot\app\manager.py:102
+#: addon\globalPlugins\polyglot\app\manager.py:103
 msgid "Invalid engine configuration."
 msgstr "引擎配置无效。"
 
@@ -182,64 +182,72 @@ msgstr "交换失败：“自动检测”不能作为目标语言。"
 msgid "Languages swapped: from {source} to {target}"
 msgstr "语言已交换：从 {source} 到 {target}"
 
-#: addon\globalPlugins\polyglot\app\manager.py:122
+#: addon\globalPlugins\polyglot\app\manager.py:123
 msgid "No languages available for cycling."
 msgstr "无可用语言。"
 
-#: addon\globalPlugins\polyglot\app\manager.py:147
+#: addon\globalPlugins\polyglot\app\manager.py:148
 msgid "No translation engines available."
 msgstr "无可用翻译引擎。"
 
+#: addon\globalPlugins\polyglot\app\manager.py:153
+#: addon\globalPlugins\polyglot\app\manager.py:275
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:44
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:237
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:271
+msgid "No enabled translation engines available."
+msgstr "没有已启用的翻译引擎。"
+
 #. Translators: Announcement of the current translation engine and languages. {engine} is the engine name, {source} is the source language, {target} is the target language.
-#: addon\globalPlugins\polyglot\app\manager.py:175
+#: addon\globalPlugins\polyglot\app\manager.py:171
 #, python-brace-format
 msgid "{engine}, from {source} to {target}"
 msgstr "{engine} 从 {source} 到 {target}"
 
-#: addon\globalPlugins\polyglot\app\manager.py:182
+#: addon\globalPlugins\polyglot\app\manager.py:180
 msgid "Languages not configured or current engine is invalid"
 msgstr "语言未配置或当前引擎无效"
 
-#: addon\globalPlugins\polyglot\app\manager.py:227
+#: addon\globalPlugins\polyglot\app\manager.py:225
 msgid "Languages not configured, cannot reverse."
 msgstr "未配置语言，无法执行反向翻译。"
 
-#: addon\globalPlugins\polyglot\app\manager.py:233
+#: addon\globalPlugins\polyglot\app\manager.py:231
 msgid "Reverse failed: 'Auto-detect' cannot be the target language."
 msgstr "交换失败：“自动检测”不能作为目标语言。"
 
-#: addon\globalPlugins\polyglot\app\manager.py:236
+#: addon\globalPlugins\polyglot\app\manager.py:234
 msgid "Current translation engine is invalid."
 msgstr "当前翻译引擎无效。"
 
-#: addon\globalPlugins\polyglot\app\manager.py:251
+#: addon\globalPlugins\polyglot\app\manager.py:249
 msgid "Nothing to translate"
 msgstr "无内容可翻译"
 
-#: addon\globalPlugins\polyglot\app\manager.py:264
+#: addon\globalPlugins\polyglot\app\manager.py:263
 #, python-brace-format
 msgid "Error: Selected engine '{engine}' is unavailable or not configured."
 msgstr "错误：所选引擎“{engine}”不可用或未配置。"
 
 #. Translators: Error message when the selected translation engine is not configured properly. {engine} is the internal ID of the engine.
-#: addon\globalPlugins\polyglot\app\manager.py:283
+#: addon\globalPlugins\polyglot\app\manager.py:305
 #, python-brace-format
 msgid "Error: Engine '{engine}' is not configured."
 msgstr "错误：引擎“{engine}”未配置。"
 
-#: addon\globalPlugins\polyglot\app\manager.py:337
+#: addon\globalPlugins\polyglot\app\manager.py:367
 msgid "Translation failed: "
 msgstr "翻译失败："
 
-#: addon\globalPlugins\polyglot\app\manager.py:341
+#: addon\globalPlugins\polyglot\app\manager.py:371
 msgid "An unknown error occurred"
 msgstr "发生未知错误"
 
-#: addon\globalPlugins\polyglot\app\manager.py:355
+#: addon\globalPlugins\polyglot\app\manager.py:385
 msgid "Auto-translation disabled due to repeated failures."
 msgstr "自动翻译因连续失败已被禁用。"
 
-#: addon\globalPlugins\polyglot\common\cues.py:167
+#: addon\globalPlugins\polyglot\common\cues.py:171
 #, python-format
 msgid "%d percent"
 msgstr "百分之 %d"
@@ -591,221 +599,231 @@ msgid "Persian"
 msgstr "波斯语"
 
 #: addon\globalPlugins\polyglot\common\languages.py:116
+#: addon\globalPlugins\polyglot\common\languages.py:117
 msgid "Hebrew"
 msgstr "希伯来语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:117
+#. Chrome Translator API
+#: addon\globalPlugins\polyglot\common\languages.py:118
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:118
+#: addon\globalPlugins\polyglot\common\languages.py:119
 msgid "Azerbaijani"
 msgstr "阿塞拜疆语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:119
+#: addon\globalPlugins\polyglot\common\languages.py:120
 msgid "Armenian"
 msgstr "亚美尼亚语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:120
+#: addon\globalPlugins\polyglot\common\languages.py:121
 msgid "Georgian"
 msgstr "格鲁吉亚语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:121
+#: addon\globalPlugins\polyglot\common\languages.py:122
 msgid "Uzbek"
 msgstr "乌兹别克语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:122
+#: addon\globalPlugins\polyglot\common\languages.py:123
 msgid "Kazakh"
 msgstr "哈萨克语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:123
+#: addon\globalPlugins\polyglot\common\languages.py:124
 msgid "Kyrgyz"
 msgstr "吉尔吉斯语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:124
+#: addon\globalPlugins\polyglot\common\languages.py:125
 msgid "Tajik"
 msgstr "塔吉克语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:125
+#: addon\globalPlugins\polyglot\common\languages.py:126
 msgid "Urdu"
 msgstr "乌尔都语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:126
+#: addon\globalPlugins\polyglot\common\languages.py:127
 msgid "Pashto"
 msgstr "普什图语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:127
+#: addon\globalPlugins\polyglot\common\languages.py:128
 msgid "Kurdish"
 msgstr "库尔德语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:128
+#: addon\globalPlugins\polyglot\common\languages.py:129
 msgid "Mongolian (Cyrillic)"
 msgstr "蒙古语(西里尔)"
 
-#: addon\globalPlugins\polyglot\common\languages.py:129
+#: addon\globalPlugins\polyglot\common\languages.py:130
 msgid "Mongolian (Traditional)"
 msgstr "蒙古语(传统)"
 
-#: addon\globalPlugins\polyglot\common\languages.py:130
+#: addon\globalPlugins\polyglot\common\languages.py:131
 msgid "Hmong"
 msgstr "苗语"
 
 #. --- African Languages ---
-#: addon\globalPlugins\polyglot\common\languages.py:132
+#: addon\globalPlugins\polyglot\common\languages.py:133
 msgid "Afrikaans"
 msgstr "南非语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:133
+#: addon\globalPlugins\polyglot\common\languages.py:134
 msgid "Swahili"
 msgstr "斯瓦希里语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:134
+#: addon\globalPlugins\polyglot\common\languages.py:135
 msgid "Somali"
 msgstr "索马里语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:135
+#: addon\globalPlugins\polyglot\common\languages.py:136
 msgid "Hausa"
 msgstr "豪萨语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:136
+#: addon\globalPlugins\polyglot\common\languages.py:137
 msgid "Yoruba"
 msgstr "约鲁巴语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:137
+#: addon\globalPlugins\polyglot\common\languages.py:138
 msgid "Igbo"
 msgstr "伊博语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:138
+#: addon\globalPlugins\polyglot\common\languages.py:139
 msgid "Zulu"
 msgstr "祖鲁语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:139
+#: addon\globalPlugins\polyglot\common\languages.py:140
 msgid "Xhosa"
 msgstr "科萨语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:140
+#: addon\globalPlugins\polyglot\common\languages.py:141
 msgid "Sesotho"
 msgstr "塞索托语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:141
+#: addon\globalPlugins\polyglot\common\languages.py:142
 msgid "Shona"
 msgstr "修纳语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:142
+#: addon\globalPlugins\polyglot\common\languages.py:143
 msgid "Malagasy"
 msgstr "马尔加什语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:143
+#: addon\globalPlugins\polyglot\common\languages.py:144
 msgid "Chichewa"
 msgstr "奇切瓦语"
 
 #. --- Oceanic & Constructed Languages ---
-#: addon\globalPlugins\polyglot\common\languages.py:145
+#: addon\globalPlugins\polyglot\common\languages.py:146
 msgid "Maori"
 msgstr "毛利语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:146
+#: addon\globalPlugins\polyglot\common\languages.py:147
 msgid "Samoan"
 msgstr "萨摩亚语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:147
+#: addon\globalPlugins\polyglot\common\languages.py:148
 msgid "Haitian Creole"
 msgstr "海地克里奥尔语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:148
+#: addon\globalPlugins\polyglot\common\languages.py:149
 msgid "Hawaiian"
 msgstr "夏威夷语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:149
+#: addon\globalPlugins\polyglot\common\languages.py:150
 msgid "Corsican"
 msgstr "科西嘉语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:150
+#: addon\globalPlugins\polyglot\common\languages.py:151
 msgid "Frisian"
 msgstr "弗里西语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:151
+#: addon\globalPlugins\polyglot\common\languages.py:152
 msgid "Yiddish"
 msgstr "意第绪语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:152
+#: addon\globalPlugins\polyglot\common\languages.py:153
 msgid "Esperanto"
 msgstr "世界语"
 
-#: addon\globalPlugins\polyglot\common\languages.py:153
+#: addon\globalPlugins\polyglot\common\languages.py:154
 msgid "Latin"
 msgstr "拉丁语"
 
-#: addon\globalPlugins\polyglot\common\network.py:72
+#: addon\globalPlugins\polyglot\common\network.py:74
 #, python-brace-format
 msgid ""
 "Service temporarily unavailable or timed out. Please try again later. (HTTP "
 "{code})"
 msgstr "服务暂时不可用或超时，请稍后重试。(HTTP {code})"
 
-#: addon\globalPlugins\polyglot\common\network.py:77
+#: addon\globalPlugins\polyglot\common\network.py:79
 msgid "Request to translation service timed out"
 msgstr "请求翻译服务超时"
 
-#: addon\globalPlugins\polyglot\common\network.py:82
+#: addon\globalPlugins\polyglot\common\network.py:84
 #, python-brace-format
 msgid "Network connection error: {error}"
 msgstr "网络连接错误：{error}"
 
-#: addon\globalPlugins\polyglot\common\network.py:127
+#: addon\globalPlugins\polyglot\common\network.py:130
 msgid "Authentication failed. Please check your API key."
 msgstr "认证失败，请检查您的 API 密钥。"
 
-#: addon\globalPlugins\polyglot\common\network.py:129
+#: addon\globalPlugins\polyglot\common\network.py:132
 msgid "Monthly translation quota has been reached."
 msgstr "本月翻译配额已用尽。"
 
-#: addon\globalPlugins\polyglot\common\network.py:134
+#: addon\globalPlugins\polyglot\common\network.py:137
 #, python-brace-format
 msgid "Service returned an error: {code} {reason}. Details: {details}"
 msgstr "服务返回错误：{code} {reason}。详情：{details}"
 
-#: addon\globalPlugins\polyglot\services\engine.py:205
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:34
+#: addon\globalPlugins\polyglot\services\engine.py:58
+msgid "Enable this engine"
+msgstr "启用此引擎(&N)"
+
+#: addon\globalPlugins\polyglot\services\engine.py:242
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:111
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:46
 msgid "Source language:"
 msgstr "源语言："
 
-#: addon\globalPlugins\polyglot\services\engine.py:212
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:35
+#: addon\globalPlugins\polyglot\services\engine.py:249
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:118
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:47
 msgid "Target language:"
 msgstr "目标语言："
 
-#: addon\globalPlugins\polyglot\services\engine.py:223
+#: addon\globalPlugins\polyglot\services\engine.py:260
 msgid "Proxy mode:"
 msgstr "代理模式："
 
-#: addon\globalPlugins\polyglot\services\engine.py:226
+#: addon\globalPlugins\polyglot\services\engine.py:263
 msgid "Use system proxy settings"
 msgstr "使用系统代理设置"
 
-#: addon\globalPlugins\polyglot\services\engine.py:227
+#: addon\globalPlugins\polyglot\services\engine.py:264
 msgid "Do not use proxy"
 msgstr "不使用代理"
 
-#: addon\globalPlugins\polyglot\services\engine.py:233
+#: addon\globalPlugins\polyglot\services\engine.py:270
 msgid "Request timeout:"
 msgstr "请求超时："
 
-#: addon\globalPlugins\polyglot\services\engine.py:249
+#: addon\globalPlugins\polyglot\services\engine.py:286
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:126
 msgid ""
 "Auto-swap if detected source matches target (source must be 'Auto-detect')"
 msgstr "当检测到的源语言与目标语言相同时自动交换 (源语言须为“自动检测”)"
 
-#: addon\globalPlugins\polyglot\services\engine.py:256
+#: addon\globalPlugins\polyglot\services\engine.py:293
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:133
 msgid "Swap to language:"
 msgstr "交换至语言："
 
-#: addon\globalPlugins\polyglot\services\engine.py:338
+#: addon\globalPlugins\polyglot\services\engine.py:389
 #: addon\globalPlugins\polyglot\services\engines\niutrans.py:195
 msgid "Failed to parse response from translation service."
 msgstr "无法解析翻译服务的响应。"
 
-#: addon\globalPlugins\polyglot\services\engine.py:343
+#: addon\globalPlugins\polyglot\services\engine.py:394
 #: addon\globalPlugins\polyglot\services\engines\microsoft.py:163
 #: addon\globalPlugins\polyglot\services\engines\niutrans.py:200
 msgid "An unknown error occurred during translation."
@@ -884,10 +902,10 @@ msgid "App ID and App Secret are required."
 msgstr "需要 App ID 和 App Secret。"
 
 #: addon\globalPlugins\polyglot\services\engines\baidu.py:144
-#: addon\globalPlugins\polyglot\services\engines\tencent.py:164
-#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:89
+#: addon\globalPlugins\polyglot\services\engines\tencent.py:166
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:96
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:110
-#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:97
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:104
 msgid "Unknown API error"
 msgstr "未知API错误"
 
@@ -905,12 +923,100 @@ msgstr "彩云的认证令牌未配置。"
 
 #: addon\globalPlugins\polyglot\services\engines\caiyun.py:107
 #: addon\globalPlugins\polyglot\services\engines\deepl.py:185
-#: addon\globalPlugins\polyglot\services\engines\microsoft.py:218
+#: addon\globalPlugins\polyglot\services\engines\microsoft.py:223
 #: addon\globalPlugins\polyglot\services\engines\niutrans.py:247
-#: addon\globalPlugins\polyglot\services\engines\tencent.py:178
+#: addon\globalPlugins\polyglot\services\engines\tencent.py:180
 #: addon\globalPlugins\polyglot\services\engines\yandex.py:130
 msgid "Invalid API response or no translation result included."
 msgstr "API 响应无效或未包含翻译结果。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:30
+msgid "Chrome AI (Offline)"
+msgstr "Chrome AI（离线）"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:89
+msgid ""
+"Enable Chrome AI offline engine (requires Chrome 138+, resources released on "
+"NVDA exit)"
+msgstr "启用 Chrome AI 离线引擎（需要 Chrome 138+，NVDA 退出时会释放资源）"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:187
+msgid ""
+"Chrome AI offline engine is disabled. Please enable it in the Polyglot "
+"settings panel to use."
+msgstr "Chrome AI 离线引擎已禁用。如需使用请先在 Polyglot 设置面板中启用。"
+
+#. Translators: {model} is a model name like "Translation model" or "Language detection model".
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:227
+#, python-brace-format
+msgid "{model} downloading..."
+msgstr "{model} 下载中。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:236
+msgid "Download complete."
+msgstr "下载完成。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:300
+msgid "Language detection model"
+msgstr "语言检测模型"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:313
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:451
+msgid "Unexpected response from Chrome AI."
+msgstr "Chrome AI 意外响应"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:385
+msgid "Translation model"
+msgstr "翻译模型"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:390
+msgid "Unexpected Chrome AI error: "
+msgstr "Chrome AI 出现意外错误："
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:416
+msgid ""
+"Chrome's Translator API is not available. Please update Chrome to version "
+"138 or later and ensure the TranslationAPI flag is enabled in chrome://flags."
+msgstr ""
+"Chrome 的翻译 API 不可用。请将 Chrome 更新至 138 或更高版本，并确保在 "
+"chrome://flags 中启用 TranslationAPI。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:424
+msgid ""
+"Chrome's LanguageDetector API is not available. Please update Chrome and "
+"enable the TranslationAPI flag."
+msgstr ""
+"Chrome 的 LanguageDetector API 不可用。请更新 Chrome 并启用 TranslationAPI。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:430
+msgid "Language detection is not supported in this Chrome installation."
+msgstr "此版本的 Chrome 不支持语言检测。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:436
+#, python-brace-format
+msgid ""
+"Could not confidently detect the source language. Please select a source "
+"language instead of Auto-detect. (confidence: {confidence})"
+msgstr ""
+"无法可靠地识别源语言。请手动选择源语言，不要使用自动检测。"
+"（置信度：{confidence}）"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:442
+msgid "Language detection error: "
+msgstr "语言检测错误："
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:446
+#, python-brace-format
+msgid "Language pair {pair} is not supported by Chrome's offline models."
+msgstr "Chrome AI 离线模型不支持语言对 {pair}。"
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:449
+msgid "Chrome AI error: "
+msgstr "Chrome AI 错误："
+
+#: addon\globalPlugins\polyglot\services\engines\chromeAi.py:449
+msgid "Unknown error"
+msgstr "未知错误"
 
 #: addon\globalPlugins\polyglot\services\engines\deepl.py:21
 msgid "DeepL"
@@ -1004,25 +1110,25 @@ msgstr "使用镜像服务器 (translate.googleapis.mirror.nvdadr.com)"
 msgid "Google Translate (Polyglot)"
 msgstr "Google 翻译 (Polyglot)"
 
-#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:145
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:147
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:107
 msgid "API Key"
 msgstr "API 密钥"
 
-#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:148
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:153
 msgid "Endpoint URL"
 msgstr "端点 URL"
 
-#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:159
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:164
 msgid "API Key for Google Translate (HQ) is not configured."
 msgstr "Google 翻译 (HQ) 的 API 密钥未配置。"
 
-#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:193
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:221
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:198
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:225
 msgid "Failed to parse API response."
 msgstr "无法解析API响应。"
 
-#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:202
+#: addon\globalPlugins\polyglot\services\engines\googlePolyglot.py:207
 msgid "Invalid API response or no translation text included."
 msgstr "API 响应无效或未包含翻译文本。"
 
@@ -1043,7 +1149,7 @@ msgstr "微软翻译 （免密钥）"
 msgid "Could not get Microsoft Translator authentication token."
 msgstr "无法获取微软翻译认证令牌。"
 
-#: addon\globalPlugins\polyglot\services\engines\microsoft.py:197
+#: addon\globalPlugins\polyglot\services\engines\microsoft.py:202
 msgid "Failed to parse response from Microsoft Translator."
 msgstr "无法解析微软翻译的响应。"
 
@@ -1088,7 +1194,7 @@ msgid "Request processing timeout"
 msgstr "请求处理超时"
 
 #: addon\globalPlugins\polyglot\services\engines\niutrans.py:49
-#: addon\globalPlugins\polyglot\services\engines\tencent.py:169
+#: addon\globalPlugins\polyglot\services\engines\tencent.py:171
 msgid "Authentication failed"
 msgstr "认证失败"
 
@@ -1165,7 +1271,7 @@ msgstr "API 密钥 (可选)"
 
 #: addon\globalPlugins\polyglot\services\engines\ollamaBase.py:93
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:123
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:43
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:55
 msgid "Prompt Template:"
 msgstr "提示词模板："
 
@@ -1192,13 +1298,13 @@ msgstr "自定义 (可编辑)"
 
 #: addon\globalPlugins\polyglot\services\engines\ollamaBase.py:106
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:135
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:44
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:56
 msgid "Custom System Prompt (Role):"
 msgstr "自定义系统提示词 (角色)："
 
 #: addon\globalPlugins\polyglot\services\engines\ollamaBase.py:112
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:141
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:45
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:57
 msgid "Custom User Prompt (Task):"
 msgstr "自定义用户提示词 (任务)："
 
@@ -1219,7 +1325,7 @@ msgid "Custom Model"
 msgstr "自定义模型"
 
 #: addon\globalPlugins\polyglot\services\engines\openRouter.py:110
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:42
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:54
 msgid "Model:"
 msgstr "模型："
 
@@ -1239,19 +1345,19 @@ msgstr "简单文本 (最快，无语言检测)"
 msgid "Fluent Style (Natural, no language detection)"
 msgstr "流利风格 (自然，无语言检测)"
 
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:163
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:167
 msgid "OpenRouter API URL is not configured."
 msgstr "未配置 OpenRouter API 地址。"
 
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:166
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:170
 msgid "API Key for OpenRouter is not configured."
 msgstr "未配置 OpenRouter API 密钥。"
 
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:172
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:176
 msgid "Custom model name is not specified."
 msgstr "未指定自定义模型名称。"
 
-#: addon\globalPlugins\polyglot\services\engines\openRouter.py:265
+#: addon\globalPlugins\polyglot\services\engines\openRouter.py:269
 msgid "Invalid API response structure."
 msgstr "无效的 API 响应结构。"
 
@@ -1321,16 +1427,16 @@ msgstr "NVDA中文站 密码"
 msgid "NVDACN username and password must be provided in settings."
 msgstr "必须在设置中提供 NVDA中文站 的用户名和密码。"
 
-#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:86
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:92
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:106
-#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:94
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:100
 msgid "API response successful but did not contain a translation result."
 msgstr "API 响应成功，但未包含翻译结果。"
 
 #. Translators: Error message when authentication with the translation service fails. {error} is the detailed error description.
-#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:92
+#: addon\globalPlugins\polyglot\services\engines\tencentPolyglot.py:99
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:83
-#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:100
+#: addon\globalPlugins\polyglot\services\engines\volcenginePolyglot.py:107
 #, python-brace-format
 msgid "Authentication failed: {error}"
 msgstr "认证失败: {error}"
@@ -1351,8 +1457,7 @@ msgstr "请求参数错误"
 msgid ""
 "Could not connect to the NVDACN authentication server to get a signature. "
 "Please check your network connection or try again later."
-msgstr ""
-"无法连接到 NVDACN 认证服务器以获取签名。请检查您的网络连接或稍后再试。"
+msgstr "无法连接到 NVDACN 认证服务器以获取签名。请检查您的网络连接或稍后再试。"
 
 #: addon\globalPlugins\polyglot\services\engines\vivo.py:85
 msgid "An unknown error occurred while generating authentication info."
@@ -1366,110 +1471,118 @@ msgstr "火山翻译 （Polyglot）"
 msgid "Yandex Translate"
 msgstr "Yandex 翻译"
 
-#: addon\globalPlugins\polyglot\services\engines\_vivoAuth.py:80
+#: addon\globalPlugins\polyglot\services\engines\_vivoAuth.py:85
 msgid "Could not connect to the authentication server."
 msgstr "无法连接到认证服务器。"
 
-#: addon\globalPlugins\polyglot\services\engines\_vivoAuth.py:87
+#: addon\globalPlugins\polyglot\services\engines\_vivoAuth.py:92
 msgid "Invalid response from the authentication server."
 msgstr "来自认证服务器的响应无效。"
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:20
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:23
 msgid "Polyglot Interactive Translation"
 msgstr "Polyglot 交互式翻译"
 
-#. --- Configuration Area ---
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:33
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:40
 #: addon\globalPlugins\polyglot\views\settings.py:53
 msgid "Translation &engine:"
 msgstr "翻译引擎(&E)："
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:37
-#: addon\globalPlugins\polyglot\views\settings.py:188
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:49
+#: addon\globalPlugins\polyglot\views\settings.py:198
 msgid "Current Engine Settings"
 msgstr "当前引擎设置"
 
 #. --- Text Areas (Vertical Layout for better expansion) ---
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:55
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:67
 msgid "Te&xt to translate:"
 msgstr "要翻译的文本(&X)："
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:64
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:76
 msgid "Translation &result:"
 msgstr "翻译结果(&R)："
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:75
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:87
 msgid "&Translate"
 msgstr "翻译(&T)"
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:77
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:91
 msgid "C&opy result"
 msgstr "复制(&O)"
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:78
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:92
 msgid "C&lear"
 msgstr "清除(&L)"
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:79
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:93
 msgid "&Close"
 msgstr "关闭(&C)"
 
 #. Translators: Label for custom model with its name.
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:143
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:168
 #, python-brace-format
 msgid "Custom: {modelName}"
 msgstr "自定义： {modelName}"
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:159
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:173
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:199
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:200
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:184
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:198
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:244
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:245
 msgid "Not applicable"
 msgstr "不适用"
 
-#: addon\globalPlugins\polyglot\views\interactiveDialog.py:255
+#: addon\globalPlugins\polyglot\views\interactiveDialog.py:304
 msgid "Translating..."
 msgstr "翻译中..."
 
-#: addon\globalPlugins\polyglot\views\settings.py:61
+#: addon\globalPlugins\polyglot\views\settings.py:63
 msgid "Common Settings"
 msgstr "通用设置"
 
-#: addon\globalPlugins\polyglot\views\settings.py:66
+#: addon\globalPlugins\polyglot\views\settings.py:68
 msgid "Copy manual translation results to clipboard"
 msgstr "将手动翻译结果复制到剪贴板"
 
-#: addon\globalPlugins\polyglot\views\settings.py:69
+#: addon\globalPlugins\polyglot\views\settings.py:74
 msgid ""
 "Enable smart speech filter (skips non-translatable text like roles, states, "
 "location and other formatting information)"
 msgstr ""
 "启用智能语音过滤（忽略无需翻译的文本，例如角色、状态、位置和其他格式信息）"
 
-#: addon\globalPlugins\polyglot\views\settings.py:71
+#: addon\globalPlugins\polyglot\views\settings.py:78
 msgid "Clear Cache"
 msgstr "清除缓存"
 
-#: addon\globalPlugins\polyglot\views\settings.py:193
+#: addon\globalPlugins\polyglot\views\settings.py:204
 msgid "This engine requires no additional configuration."
 msgstr "此引擎无需额外配置。"
 
-#: addon\globalPlugins\polyglot\views\settings.py:279
+#: addon\globalPlugins\polyglot\views\settings.py:295
 #, python-brace-format
 msgid "Clear Cache (Items: {})"
 msgstr "清除缓存 (条目数：{})"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-on store
-#: buildVars.py:25
+#: buildVars.py:26
 msgid "This is A translation add-on. Supports multiple engines."
 msgstr "这是一个翻译插件，支持多种引擎。"
 
 #. Brief changelog for this version
 #. Translators: what's new content for the add-on version to be shown in the add-on store
-#: buildVars.py:30
-msgid "First version."
-msgstr "初版发布。"
+#: buildVars.py:31
+msgid ""
+"### 0.8.1\n"
+"\n"
+"Bump version."
+msgstr ""
+"### 0.8.1\n"
+"\n"
+"更新版本。"
+
+#~ msgid "First version."
+#~ msgstr "初版发布。"
 
 #~ msgid "The current engine has no swappable languages."
 #~ msgstr "当前引擎无可交换的语言。"

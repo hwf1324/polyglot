@@ -27,7 +27,7 @@ The preferred installation path is the NVDA Add-on Store. You can also install m
 ## Quick Start
 
 1. Open `NVDA menu -> Preferences -> Settings -> Polyglot`.
-2. Choose a translation engine.
+2. Choose a translation engine and make sure it is enabled.
 3. Configure any required credentials for that engine.
 4. Set source and target languages.
 5. Optionally enable clipboard copy and the smart speech filter.
@@ -35,7 +35,7 @@ The preferred installation path is the NVDA Add-on Store. You can also install m
 
 ## Command Layer
 
-Press `NVDA+Shift+T` to enter the command layer. A short beep confirms that the layer is active. Most commands execute once and exit the layer. Language and engine switching commands stay inside the layer so you can continue cycling.
+Press `NVDA+Shift+T` to enter the command layer. A short beep confirms that the layer is active. Most commands execute once and exit the layer. Language and engine switching commands stay inside the layer so you can continue cycling. Engine switching cycles through enabled engines only.
 
 | Key | Action |
 | --- | --- |
@@ -49,8 +49,8 @@ Press `NVDA+Shift+T` to enter the command layer. A short beep confirms that the 
 | `Shift+S` | Previous source language. |
 | `G` | Next target language. |
 | `Shift+G` | Previous target language. |
-| `E` | Next engine. |
-| `Shift+E` | Previous engine. |
+| `E` | Next enabled engine. |
+| `Shift+E` | Previous enabled engine. |
 | `W` | Swap source and target languages. |
 | `A` | Announce the current engine and language pair. |
 | `C` | Copy the last translation result. |
@@ -65,7 +65,8 @@ Press `NVDA+Shift+T` to enter the command layer. A short beep confirms that the 
 The interactive dialog is designed for longer text and iterative translation work.
 
 - Open it from the command layer with `I`.
-- Select engine, source language, and target language without leaving the dialog.
+- Select an enabled engine, source language, and target language without leaving the dialog.
+- Disabled engines remain configurable in settings, but are not listed in this dialog.
 - For LLM-style engines, adjust model and prompt template directly in the dialog.
 - Press `Ctrl+Enter` in the source text box to translate.
 - Copy the result or clear both panes without reopening the window.
@@ -82,6 +83,7 @@ The interactive dialog is designed for longer text and iterative translation wor
 
 Most engines inherit a common set of settings:
 
+- `Enable this engine`: controls whether the engine is available for translation requests, command-layer engine switching, and the interactive dialog. Disabled engines remain visible and configurable in settings.
 - `Source language` and `Target language`
 - `Proxy mode`: use system proxy settings or disable proxy usage
 - `Request timeout`
@@ -187,7 +189,7 @@ When adding a new engine:
 2. Implement `TranslationEngine` or, for HTTP engines, extend `BaseHttpEngine`.
 3. Return a config spec from `getConfigSpec()` if the engine needs settings.
 4. Use supported control types from `views/factory.py`: `choice`, `text`, `password`, `checkbox`, and `spinctrl`.
-5. Verify the engine appears correctly in the dynamic settings panel and command-layer.
+5. Verify the engine appears correctly in the dynamic settings panel and, when enabled, command-layer switching and the interactive dialog.
 
 ## License
 
