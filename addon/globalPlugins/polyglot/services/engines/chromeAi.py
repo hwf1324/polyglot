@@ -9,6 +9,7 @@ triggering the auto-translate cascade loop.
 """
 
 import json
+import re
 import threading
 import time
 from typing import Any
@@ -34,6 +35,7 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 	_DETECTION_CONFIDENCE_THRESHOLD = 0.35
 	_MAX_MODEL_PREPARATION_RETRIES = 2
 	_MAX_CACHED_TRANSLATORS = 4
+	_ENGLISH_EM_DASH_PATTERN = re.compile(r"[ \t]*\u2014[ \t]*")
 	_TRANSIENT_ERROR_MARKERS = (
 		"AbortError",
 		"InvalidStateError",
@@ -258,6 +260,12 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 		"""Converts text to a JavaScript string literal."""
 		return json.dumps(value, ensure_ascii=False)
 
+	def _normalizeSourceTextForTranslation(self, text: str, sourceLang: str) -> str:
+		"""Normalizes narrow Chrome AI input quirks without changing non-English text."""
+		if sourceLang != "en" or "\u2014" not in text:
+			return text
+		return self._ENGLISH_EM_DASH_PATTERN.sub(" - ", text)
+
 	def _normalizeDetectedLanguage(self, languageCode: str) -> str | None:
 		"""Normalizes LanguageDetector BCP 47 results to Chrome Translator language codes."""
 		if not languageCode or languageCode == "und":
@@ -410,7 +418,8 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 			detectResult = self._detectLanguage(text)
 			langFrom = detectResult["sourceLang"]
 			detectedLang = langFrom
-		inputText = self._toJsStringLiteral(text)
+		translationText = self._normalizeSourceTextForTranslation(text, langFrom)
+		inputText = self._toJsStringLiteral(translationText)
 		sourceLang = self._toJsStringLiteral(langFrom)
 		targetLang = self._toJsStringLiteral(langTo)
 		jsPayload = f"""
