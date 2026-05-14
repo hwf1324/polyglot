@@ -76,7 +76,35 @@ i18nSources: list[str] = pythonSources + ["buildVars.py"]
 # Paths are relative to the addon directory, not to the root directory of your addon sources.
 # You can either list every file (using ""/") as a path separator,
 # or use glob expressions.
-excludedFiles: list[str] = []
+excludedFiles: list[str] = [
+	"**/__pycache__/**",
+	"**/*.pyc",
+	"websocketClientRepo/.git",
+	"websocketClientRepo/.git/**",
+	"websocketClientRepo/.git/**/*",
+	"websocketClientRepo/.github/**",
+	"websocketClientRepo/.github/**/*",
+	"websocketClientRepo/compliance/**",
+	"websocketClientRepo/compliance/**/*",
+	"websocketClientRepo/docs/**",
+	"websocketClientRepo/docs/**/*",
+	"websocketClientRepo/examples/**",
+	"websocketClientRepo/examples/**/*",
+	"websocketClientRepo/websocket/tests/**",
+	"websocketClientRepo/websocket/tests/**/*",
+	"websocketClientRepo/.coveragerc",
+	"websocketClientRepo/.gitattributes",
+	"websocketClientRepo/.gitignore",
+	"websocketClientRepo/.readthedocs.yml",
+	"websocketClientRepo/CONTRIBUTING.md",
+	"websocketClientRepo/ChangeLog",
+	"websocketClientRepo/MANIFEST.in",
+	"websocketClientRepo/README.md",
+	"websocketClientRepo/mypy.ini",
+	"websocketClientRepo/setup.cfg",
+	"websocketClientRepo/setup.py",
+	"websocketClientRepo/upload.sh",
+]
 
 # Base language for the NVDA add-on
 # If your add-on is written in a language other than english, modify this variable.
