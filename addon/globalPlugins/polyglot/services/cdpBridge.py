@@ -127,7 +127,7 @@ class CdpBridge:
 					"--remote-debugging-port=0",
 					f"--user-data-dir={USER_DATA_DIR}",
 					"--remote-allow-origins=*",
-					"--enable-features=TranslationAPI,LanguageDetectionAPI",
+					"--enable-features=TranslationAPI",
 					"--disable-gpu",
 					"--mute-audio",
 					"--no-first-run",
@@ -294,7 +294,6 @@ class CdpBridge:
 			isSecureContext: globalThis.isSecureContext,
 			href: location.href,
 			hasTranslator: typeof Translator !== 'undefined',
-			hasLanguageDetector: typeof LanguageDetector !== 'undefined',
 			userActivation: navigator.userActivation ? {
 				isActive: navigator.userActivation.isActive,
 				hasBeenActive: navigator.userActivation.hasBeenActive,

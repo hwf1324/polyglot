@@ -122,7 +122,7 @@ Polyglot can use Chrome's built-in Translator API for offline translation. Trans
 
 ### How To Use
 
-Select `Chrome AI (Offline)` in Polyglot settings, then choose the source and target languages.
+Select `Chrome AI (Offline)` in Polyglot settings, then choose the source and target languages. Chrome AI requires an explicit source language; `Auto-detect` is not available for this engine, so Polyglot can check the required model before starting Chrome.
 
 On first use, if the required model is not installed, Polyglot asks how to proceed. Choose Yes to download and install the model with Polyglot's model manager; use this if Chrome's model download service is slow, blocked, or unreliable on your network. Choose No to let Chrome download the model. Choose Cancel to cancel the current translation. After the model is ready, translation continues automatically.
 
@@ -147,6 +147,7 @@ When NVDA exits, Polyglot closes the Chrome instance it started.
 ### Limitations
 
 - Supported languages and language pairs are determined by Chrome's Translator API.
+- Chrome AI requires an explicit source language; `Auto-detect` is not available for this engine.
 - First use requires the model to be prepared; model downloads may be affected by network conditions.
 - If the Translator API is unavailable, update Chrome or make sure the related Chrome feature is enabled.
 
@@ -158,7 +159,7 @@ The repository currently includes the following engines:
 | --- | --- | --- |
 | `Baidu Translate` | Baidu app ID and secret | Standard vendor API integration. |
 | `Caiyun` | Caiyun token | Standard vendor API integration. |
-| `Chrome AI (Offline)` | None | Uses Chrome's built-in Translator API with local models; the model must be prepared on first use. |
+| `Chrome AI (Offline)` | None | Uses Chrome's built-in Translator API with local models; select the source language explicitly. |
 | `DeepL` | DeepL API key | Standard vendor API integration. |
 | `Google Translate (key-free)` | None | Supports an optional mirror endpoint toggle. |
 | `Google Translate (Polyglot)` | Configurable API key and endpoint | Ships with default endpoint values in code; availability depends on service status. |

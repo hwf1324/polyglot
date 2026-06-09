@@ -3,7 +3,7 @@
 """
 chromeAi - Chrome On-Device AI Translation Engine.
 
-Uses Chrome's built-in Translator and LanguageDetector APIs via CDP.
+Uses Chrome's built-in Translator API via CDP.
 Download feedback uses periodic beep cues (not speech) to avoid
 triggering the auto-translate cascade loop.
 """
@@ -52,7 +52,6 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 		super().__init__()
 		self._bridge = CdpBridge.getInstance()
 		supportedCodes = [
-			"auto",
 			"ar",
 			"bg",
 			"bn",
@@ -97,7 +96,7 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 
 	@property
 	def autoDetectCode(self) -> str | None:
-		return "auto"
+		return None
 
 	@property
 	def enabledConfigLabel(self) -> str:
@@ -106,7 +105,7 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 
 	@property
 	def defaultSourceLanguage(self) -> str:
-		return "auto"
+		return "en"
 
 	@property
 	def defaultTargetLanguage(self) -> str:
@@ -114,12 +113,8 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 
 	def getConfigSpec(self) -> list[dict[str, Any]]:
 		allLangs = self.getSupportedLanguages()
-		autoCode = self.autoDetectCode
 		fromChoices = allLangs.copy()
 		toChoices = allLangs.copy()
-		if autoCode is not None:
-			_unused = toChoices.pop(autoCode, None)
-		swapChoices = toChoices.copy()
 		return [
 			self.getEnabledConfigSpec(),
 			{
@@ -136,44 +131,21 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 				"choices": toChoices,
 				"default": self.defaultTargetLanguage,
 			},
-			{
-				"id": "enableAutoSwap",
-				"label": _(
-					"Auto-swap if detected source matches target (source must be 'Auto-detect')",
-				),
-				"type": "checkbox",
-				"default": False,
-			},
-			{
-				"id": "swapLanguage",
-				"label": _("Swap to language:"),
-				"type": "choice",
-				"choices": swapChoices,
-				"default": "",
-			},
 		]
 
 	def getUiStates(self, allConfigs: dict[str, Any]) -> dict[str, Any]:
 		states: dict[str, Any] = {}
 		allLangs = self.getSupportedLanguages()
-		autoCode = self.autoDetectCode
-		selectedFrom = allConfigs.get("langFrom")
-		selectedTo = allConfigs.get("langTo")
+		selectedFrom = allConfigs.get("langFrom", self.defaultSourceLanguage)
+		selectedTo = allConfigs.get("langTo", self.defaultTargetLanguage)
 		toChoices = allLangs.copy()
-		if autoCode is not None:
-			_unused = toChoices.pop(autoCode, None)
 		fromChoices = allLangs.copy()
 		if selectedTo:
 			_unused = fromChoices.pop(selectedTo, None)
-		validToLangs = toChoices.copy()
-		if selectedFrom and selectedFrom != autoCode:
-			_unused = validToLangs.pop(selectedFrom, None)
+		if selectedFrom:
+			_unused = toChoices.pop(selectedFrom, None)
 		states["langFrom"] = {"choices": fromChoices}
-		states["langTo"] = {"choices": validToLangs}
-		isAutoFrom = selectedFrom == autoCode
-		states["enableAutoSwap"] = {"visible": isAutoFrom}
-		isSwapVisible = isAutoFrom and allConfigs.get("enableAutoSwap", False)
-		states["swapLanguage"] = {"visible": isSwapVisible, "choices": validToLangs.copy()}
+		states["langTo"] = {"choices": toChoices}
 		return states
 
 	def getSupportedLanguages(self) -> dict[str, str]:
@@ -205,7 +177,7 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 
 	def _ensureNativeModelReady(self, langFrom: str, langTo: str) -> None:
 		"""Prompt for native model installation when the required package is missing."""
-		if langFrom == self.autoDetectCode or langFrom == langTo:
+		if langFrom == langTo:
 			return
 		try:
 			shouldContinue = getModelManagerService().ensureModelForPairInteractive(langFrom, langTo)
@@ -233,10 +205,9 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 			)
 		if isCancelled and isCancelled():
 			return {}
-		if langFrom != self.autoDetectCode:
-			self._ensureNativeModelReady(langFrom, langTo)
-			if isCancelled and isCancelled():
-				return {}
+		self._ensureNativeModelReady(langFrom, langTo)
+		if isCancelled and isCancelled():
+			return {}
 		if not self._waitForModelPreparation(isCancelled):
 			return {}
 		log.debug(f"Chrome AI: translate {len(text)} chars, {langFrom}->{langTo}")
@@ -267,7 +238,7 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 				queueHandler.queueFunction(
 					queueHandler.eventQueue,
 					cues.Speech.message,
-					# Translators: {model} is a model name like "Translation model" or "Language detection model".
+					# Translators: {model} is a model name like "Translation model".
 					_("Preparing {model}...").format(model=modelLabel),
 				)
 			elif logText == "[MODEL_FINALIZING]":
@@ -295,26 +266,12 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 			return text
 		return self._ENGLISH_EM_DASH_PATTERN.sub(" - ", text)
 
-	def _normalizeDetectedLanguage(self, languageCode: str) -> str | None:
-		"""Normalizes LanguageDetector BCP 47 results to Chrome Translator language codes."""
-		if not languageCode or languageCode == "und":
-			return None
-		code = languageCode.replace("_", "-")
-		lowerCode = code.lower()
-		if lowerCode in ("he", "iw"):
-			return "iw"
-		if lowerCode.startswith("zh-hant") or lowerCode in ("zh-tw", "zh-hk", "zh-mo"):
-			return "zh-Hant"
-		if lowerCode.startswith("zh"):
-			return "zh"
-		return lowerCode.split("-", 1)[0]
-
 	def _shouldRetryResult(self, result: dict[str, Any]) -> bool:
 		"""Returns whether a Chrome AI result looks like a transient failure."""
 		code = result.get("code")
-		if code in ("API_ERR_UNDEFINED", "DETECTOR_ERR_UNDEFINED", "PARSE_ERR"):
+		if code in ("API_ERR_UNDEFINED", "PARSE_ERR"):
 			return True
-		if code not in ("DETECTOR_ERR_EXCEPTION", "TRANSLATE_ERR_EXCEPTION"):
+		if code != "TRANSLATE_ERR_EXCEPTION":
 			return False
 		message = f"{result.get('name', '')} {result.get('message', '')}".lower()
 		return any(marker.lower() in message for marker in self._TRANSIENT_ERROR_MARKERS)
@@ -343,97 +300,6 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 			time.sleep(0.4 * (attempt + 1))
 		return lastResult or {"code": "PARSE_ERR", "raw": ""}
 
-	def _detectLanguage(self, text: str) -> dict[str, str | None]:
-		"""Detect the source language via a separate CDP call.
-
-		Runs in its own evaluateSync with a fresh userGesture activation,
-		so its model download won't consume the activation needed by the Translator.
-		"""
-		inputText = self._toJsStringLiteral(text)
-		jsPayload = f"""
-		(async () => {{
-			const makeError = (e) => {{
-				return {{
-					name: e && e.name ? e.name : '',
-					message: e && e.message ? e.message : e.toString(),
-					stack: e && e.stack ? e.stack : '',
-				}};
-			}};
-			if (!globalThis.isSecureContext) {{
-				return JSON.stringify({{code: 'ERR_INSECURE_CONTEXT', href: location.href}});
-			}}
-			if (typeof LanguageDetector === 'undefined') {{
-				return JSON.stringify({{code: 'DETECTOR_ERR_UNDEFINED'}});
-			}}
-			const inputText = {inputText};
-			const downloadStates = new Set(['downloadable', 'downloading']);
-			try {{
-				if (!globalThis._aiLanguageDetector) {{
-					const detAvail = await LanguageDetector.availability();
-					if (detAvail === 'no' || detAvail === 'unavailable') {{
-						return JSON.stringify({{code: 'DETECTOR_ERR_UNAVAILABLE', state: detAvail}});
-					}}
-					const detOptions = {{}};
-					if (downloadStates.has(detAvail)) {{
-						console.log('[MODEL_START]');
-						detOptions.monitor = (m) => {{
-							m.addEventListener('downloadprogress', (e) => {{
-								const pct = Math.max(0, Math.min(100, Math.round(e.loaded * 100)));
-								console.log('[MODEL_PROGRESS]' + pct);
-								if (pct >= 100) {{
-									console.log('[MODEL_FINALIZING]');
-								}}
-							}});
-						}};
-					}}
-					globalThis._aiLanguageDetector = await LanguageDetector.create(detOptions);
-					if (downloadStates.has(detAvail)) {{
-						console.log('[MODEL_END]');
-				}}
-				}}
-				const detections = await globalThis._aiLanguageDetector.detect(inputText);
-				if (detections.length > 0) {{
-					return JSON.stringify({{
-						code: 'SUCCESS',
-						lang: detections[0].detectedLanguage,
-						confidence: detections[0].confidence,
-					}});
-				}}
-				return JSON.stringify({{
-					code: 'DETECTOR_ERR_LOW_CONFIDENCE',
-					confidence: detections.length > 0 ? detections[0].confidence : 0,
-				}});
-			}} catch (e) {{
-				const error = makeError(e);
-				return JSON.stringify({{
-					code: 'DETECTOR_ERR_EXCEPTION',
-					name: error.name,
-					message: error.name ? error.name + ': ' + error.message : error.message,
-					stack: error.stack,
-				}});
-			}}
-		}})();
-		"""
-		try:
-			result = self._evaluateChromeAiScript(
-				jsPayload,
-				onConsoleLog=self._makeModelPreparationHandler(_("Language detection model")),
-				operationName="language detection",
-			)
-		finally:
-			if ChromeAiEngine._isPreparingModel:
-				with self._downloadLock:
-					ChromeAiEngine._isPreparingModel = False
-		code = result.get("code")
-		if code == "SUCCESS":
-			sourceLang = self._normalizeDetectedLanguage(str(result.get("lang", "")))
-			if sourceLang is None:
-				result = {"code": "DETECTOR_ERR_LOW_CONFIDENCE", "confidence": result.get("confidence", 0)}
-				self._parseCdpResult(result, "")
-			return {"sourceLang": str(sourceLang)}
-		self._parseCdpResult(result, "")
-		raise EngineError(_("Chrome AI returned an unexpected response."))
-
 	def _translateChunk(
 		self,
 		text: str,
@@ -441,15 +307,6 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 		langTo: str,
 		config: dict[str, Any],
 	) -> dict[str, Any]:
-		detectedLang = None
-		if langFrom == "auto":
-			detectResult = self._detectLanguage(text)
-			detectedSourceLang = detectResult["sourceLang"]
-			if not detectedSourceLang:
-				raise EngineError(_("Chrome AI returned an unexpected response."))
-			langFrom = detectedSourceLang
-			detectedLang = langFrom
-		self._ensureNativeModelReady(langFrom, langTo)
 		translationText = self._normalizeSourceTextForTranslation(text, langFrom)
 		inputText = self._toJsStringLiteral(translationText)
 		sourceLang = self._toJsStringLiteral(langFrom)
@@ -540,23 +397,18 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 			if ChromeAiEngine._isPreparingModel:
 				with self._downloadLock:
 					ChromeAiEngine._isPreparingModel = False
-		if detectedLang:
-			result["detectedLang"] = detectedLang
 		return self._parseCdpResult(result, text)
 
 	def _parseCdpResult(self, result: dict[str, Any], text: str) -> dict[str, Any]:
 		code = result.get("code")
-		detectedLang = result.get("detectedLang")
-		log.debug(f"Chrome AI: JS returned code={code}, detectedLang={detectedLang}")
+		log.debug(f"Chrome AI: JS returned code={code}")
 		if code == "SUCCESS":
 			return {
 				"translation": result.get("data", ""),
-				"langDetected": detectedLang,
 			}
 		elif code == "SAME_LANGUAGE":
 			return {
 				"translation": text,
-				"langDetected": detectedLang,
 			}
 		elif code == "API_ERR_UNDEFINED":
 			raise EngineError(
@@ -564,13 +416,6 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 					"Chrome's Translator API is not available. "
 					"Please update Chrome to version 138 or later "
 					"and ensure the TranslationAPI flag is enabled in chrome://flags.",
-				),
-			)
-		elif code == "DETECTOR_ERR_UNDEFINED":
-			raise EngineError(
-				_(
-					"Chrome's LanguageDetector API is not available. "
-					"Please update Chrome and enable the TranslationAPI and LanguageDetectionAPI flags.",
 				),
 			)
 		elif code == "ERR_INSECURE_CONTEXT":
@@ -581,27 +426,11 @@ class ChromeAiEngine(ChunkedTranslationMixin):
 					"Please restart NVDA and try the Chrome AI engine again.",
 				),
 			)
-		elif code == "DETECTOR_ERR_UNAVAILABLE":
-			raise EngineError(
-				_("Language detection is not supported in this Chrome installation."),
-			)
-		elif code == "DETECTOR_ERR_LOW_CONFIDENCE":
-			confidence = result.get("confidence", 0)
-			raise EngineError(
-				_(
-					"The source language could not be detected confidently. "
-					"Select a source language instead of Auto-detect. "
-					"(confidence: {confidence})",
-				).format(confidence=confidence),
-			)
-		elif code == "DETECTOR_ERR_EXCEPTION":
-			raise EngineError(_("Language detection error: ") + result.get("message", ""))
 		elif code == "MODEL_STATE_NO":
 			pair = result.get("pair", "?->?")
 			log.info(f"Chrome AI: language pair {pair} is unsupported; returning original text.")
 			return {
 				"translation": text,
-				"langDetected": detectedLang,
 			}
 		elif code == "TRANSLATE_ERR_EXCEPTION":
 			raise EngineError(_("Chrome AI error: ") + result.get("message", _("Unknown error")))
