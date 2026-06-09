@@ -25,12 +25,13 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_("""A translation add-on for NVDA with support for multiple engines."""),
 	# version
-	addon_version="0.8.7",
+	addon_version="0.9.0",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
-	addon_changelog=_("""### 0.8.7
+	addon_changelog=_("""### 0.9.0
 
-- ChromeAI stability improvements."""),
+- Add the ChromeAI offline model manager and installation flow.
+- Change the translation command layer gesture to NVDA+Alt+Z and document command layer help."""),
 	# Author(s)
 	addon_author="cary-rowen <manchen_0528@outlook.com>",
 	# URL for the add-on documentation support

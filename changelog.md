@@ -1,3 +1,4 @@
-### 0.8.7
+### 0.9.0
 
-- ChromeAI stability improvements.
+- Add the ChromeAI offline model manager and installation flow.
+- Change the translation command layer gesture to NVDA+Alt+Z and document command layer help.
