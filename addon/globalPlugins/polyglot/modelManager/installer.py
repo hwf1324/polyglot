@@ -66,16 +66,24 @@ class ModelInstaller:
 		translationState = getObject(localState, "on_device_translation")
 		packagesState = getObject(translationState, "translate_kit_packages")
 		for package in catalog.packages:
-			registered = packagesState.get(f"{package.key}_registered") is True
-			pathValue = packagesState.get(f"{package.key}_path")
-			pathIsComplete = (
-				registered
-				and isinstance(pathValue, str)
-				and self.isInstallPathComplete(package, Path(pathValue))
-			)
-			if pathIsComplete or self.isCurrentPackageComplete(package):
+			if self.isPackageInstalled(package, packagesState):
 				installed.add(package.key)
 		return installed
+
+	def isPackageInstalled(self, package: ModelPackage, packagesState: dict[str, object] | None = None) -> bool:
+		"""Return whether one model package is complete on disk."""
+		if packagesState is None:
+			localState = readJsonObject(self.profileDir / "Local State")
+			translationState = getObject(localState, "on_device_translation")
+			packagesState = getObject(translationState, "translate_kit_packages")
+		registered = packagesState.get(f"{package.key}_registered") is True
+		pathValue = packagesState.get(f"{package.key}_path")
+		pathIsComplete = (
+			registered
+			and isinstance(pathValue, str)
+			and self.isInstallPathComplete(package, Path(pathValue))
+		)
+		return pathIsComplete or self.isCurrentPackageComplete(package)
 
 	def getRegisteredPackageKeys(self) -> set[str]:
 		"""Return package keys registered in Chrome's Local State."""

@@ -92,6 +92,15 @@ class ModelManagerService:
 		self._missingModelRequestLock = threading.Lock()
 		self._activeMissingModelRequest: _ActiveMissingModelRequest | None = None
 
+	def getCatalogSnapshot(self) -> ModelCatalog:
+		"""Return the current catalog without remote IO."""
+		if self._catalog is not None:
+			return self._catalog
+		catalog = ModelCatalog.loadBundled()
+		self._catalogUrl = ""
+		self._catalog = catalog
+		return catalog
+
 	def loadCatalog(self) -> ModelCatalog:
 		"""Load the configured remote catalog with bundled fallback."""
 		settings = ModelManagerSettings.load(self.installer.polyglotRoot)
@@ -114,15 +123,15 @@ class ModelManagerService:
 
 	def findRequiredPackages(self, sourceLanguage: str, targetLanguage: str) -> tuple[ModelCatalog, list[ModelPackage]] | None:
 		"""Find the package or packages required for a requested language pair."""
-		catalog = self.loadCatalog()
+		catalog = self.getCatalogSnapshot()
 		packages = catalog.findPackagesForPair(sourceLanguage, targetLanguage)
 		if not packages:
 			return None
 		return catalog, packages
 
-	def isPackageInstalled(self, catalog: ModelCatalog, package: ModelPackage) -> bool:
+	def isPackageInstalled(self, package: ModelPackage) -> bool:
 		"""Return whether a package is already complete on disk."""
-		return package.key in self.installer.getInstalledPackageKeys(catalog)
+		return self.installer.isPackageInstalled(package)
 
 	def ensureModelForPairInteractive(self, sourceLanguage: str, targetLanguage: str) -> bool:
 		"""Ensure a model is ready, prompting the user only when installation is needed.
@@ -137,8 +146,8 @@ class ModelManagerService:
 		missingPackages = [
 			package
 			for package in packages
-			if not self.isPackageInstalled(catalog, package)
-			and package.key not in self._chromeFallbackPackageKeys
+			if package.key not in self._chromeFallbackPackageKeys
+			and not self.isPackageInstalled(package)
 		]
 		if not missingPackages:
 			return True
