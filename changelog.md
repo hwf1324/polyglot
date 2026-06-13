@@ -1,3 +1,5 @@
-### 0.9.1
+### 0.9.5
 
-- Require an explicit source language for ChromeAI offline translation.
+- Improved ChromeAI model checks for faster translation responses.
+- Improved ChromeAI cold-start performance.
+- Hardened ChromeAI's managed Chrome handling for better stability and safety.

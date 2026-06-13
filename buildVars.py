@@ -25,12 +25,14 @@ addon_info = AddonInfo(
 	# Translators: Long description to be shown for this add-on on add-on information from add-on store
 	addon_description=_("""A translation add-on for NVDA with support for multiple engines."""),
 	# version
-	addon_version="0.9.1",
+	addon_version="0.9.5",
 	# Brief changelog for this version
 	# Translators: what's new content for the add-on version to be shown in the add-on store
-	addon_changelog=_("""### 0.9.1
+	addon_changelog=_("""### 0.9.5
 
-- Require an explicit source language for ChromeAI offline translation."""),
+- Improved ChromeAI model checks for faster translation responses.
+- Improved ChromeAI cold-start performance.
+- Hardened ChromeAI's managed Chrome handling for better stability and safety."""),
 	# Author(s)
 	addon_author="cary-rowen <manchen_0528@outlook.com>",
 	# URL for the add-on documentation support
