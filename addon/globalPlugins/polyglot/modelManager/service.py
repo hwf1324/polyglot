@@ -115,13 +115,20 @@ class ModelManagerService:
 			self._catalog = catalog
 			return catalog
 		except Exception:
-			log.warning("Failed to load remote ChromeAI model catalog; using bundled fallback.", exc_info=True)
+			log.warning(
+				"Failed to load remote ChromeAI model catalog; using bundled fallback.",
+				exc_info=True,
+			)
 			catalog = ModelCatalog.loadBundled()
 			self._catalogUrl = ""
 			self._catalog = catalog
 			return catalog
 
-	def findRequiredPackages(self, sourceLanguage: str, targetLanguage: str) -> tuple[ModelCatalog, list[ModelPackage]] | None:
+	def findRequiredPackages(
+		self,
+		sourceLanguage: str,
+		targetLanguage: str,
+	) -> tuple[ModelCatalog, list[ModelPackage]] | None:
 		"""Find the package or packages required for a requested language pair."""
 		catalog = self.getCatalogSnapshot()
 		packages = catalog.findPackagesForPair(sourceLanguage, targetLanguage)
@@ -146,8 +153,7 @@ class ModelManagerService:
 		missingPackages = [
 			package
 			for package in packages
-			if package.key not in self._chromeFallbackPackageKeys
-			and not self.isPackageInstalled(package)
+			if package.key not in self._chromeFallbackPackageKeys and not self.isPackageInstalled(package)
 		]
 		if not missingPackages:
 			return True

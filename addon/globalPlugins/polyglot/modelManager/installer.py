@@ -47,7 +47,9 @@ class ModelInstaller:
 
 	def __init__(self, polyglotRoot: Path | None = None, tempDownloadDir: Path | None = None) -> None:
 		self.polyglotRoot = polyglotRoot or getLocalAppData() / "Polyglot"
-		self.tempDownloadDir = tempDownloadDir or Path(tempfile.gettempdir()) / "PolyglotChromeAIModelDownloads"
+		self.tempDownloadDir = (
+			tempDownloadDir or Path(tempfile.gettempdir()) / "PolyglotChromeAIModelDownloads"
+		)
 
 	@property
 	def profileDir(self) -> Path:
@@ -70,7 +72,11 @@ class ModelInstaller:
 				installed.add(package.key)
 		return installed
 
-	def isPackageInstalled(self, package: ModelPackage, packagesState: dict[str, object] | None = None) -> bool:
+	def isPackageInstalled(
+		self,
+		package: ModelPackage,
+		packagesState: dict[str, object] | None = None,
+	) -> bool:
 		"""Return whether one model package is complete on disk."""
 		if packagesState is None:
 			localState = readJsonObject(self.profileDir / "Local State")
@@ -79,9 +85,7 @@ class ModelInstaller:
 		registered = packagesState.get(f"{package.key}_registered") is True
 		pathValue = packagesState.get(f"{package.key}_path")
 		pathIsComplete = (
-			registered
-			and isinstance(pathValue, str)
-			and self.isInstallPathComplete(package, Path(pathValue))
+			registered and isinstance(pathValue, str) and self.isInstallPathComplete(package, Path(pathValue))
 		)
 		return pathIsComplete or self.isCurrentPackageComplete(package)
 
@@ -112,7 +116,9 @@ class ModelInstaller:
 
 	def hasDownloadCacheFilesFast(self) -> bool:
 		"""Return whether temp or legacy download cache directories contain entries."""
-		return hasAnyFileSystemEntry(self.tempDownloadDir) or hasAnyFileSystemEntry(self.legacyDownloadCacheDir)
+		return hasAnyFileSystemEntry(self.tempDownloadDir) or hasAnyFileSystemEntry(
+			self.legacyDownloadCacheDir,
+		)
 
 	def getDownloadCacheSize(self) -> int:
 		"""Return total bytes used by temp and legacy download caches."""
@@ -260,7 +266,9 @@ class ModelInstaller:
 		downloadFile(url, destination, archive.size, progress)
 		if not verifyArchive(destination, archive):
 			deleteFileIfExists(destination)
-			raise RuntimeError(_("Downloaded archive verification failed: {fileName}").format(fileName=fileName))
+			raise RuntimeError(
+				_("Downloaded archive verification failed: {fileName}").format(fileName=fileName),
+			)
 		return destination
 
 	def extractArchiveFromFile(self, archivePath: Path, progress: ProgressCallback) -> None:
@@ -280,10 +288,12 @@ class ModelInstaller:
 			rootPrefix = rootFull if rootFull.endswith(os.sep) else rootFull + os.sep
 			total = len(entries)
 			for index, entry in enumerate(entries, start=1):
-				relative = entry.filename[len("payload/"):].replace("/", os.sep).replace("\\", os.sep)
+				relative = entry.filename[len("payload/") :].replace("/", os.sep).replace("\\", os.sep)
 				destination = os.path.abspath(os.path.join(rootFull, relative))
 				if not destination.startswith(rootPrefix):
-					raise RuntimeError(_("Archive entry is outside the install root: {entry}").format(entry=entry.filename))
+					raise RuntimeError(
+						_("Archive entry is outside the install root: {entry}").format(entry=entry.filename),
+					)
 				destinationPath = Path(destination)
 				destinationPath.parent.mkdir(parents=True, exist_ok=True)
 				with archive.open(entry, "r") as source, destinationPath.open("wb") as target:
@@ -362,11 +372,7 @@ class ModelInstaller:
 		hashes = getObject(metadata, "hashes")
 		metadata["hashes"] = hashes
 		preserveExistingRuntime = not selectedKeys and self.hasRegisteredPackagesOutsideCatalog(catalog)
-		managedIds = {
-			package.componentId
-			for package in catalog.packages
-			if package.componentId
-		}
+		managedIds = {package.componentId for package in catalog.packages if package.componentId}
 		if not preserveExistingRuntime and catalog.runtime.componentId:
 			managedIds.add(catalog.runtime.componentId)
 		for key, value in list(hashes.items()):
@@ -398,11 +404,12 @@ class ModelInstaller:
 			packages[f"{package.key}_registered"] = True
 		translation["translate_kit_packages"] = packages
 		hasRegisteredPackages = any(
-			key.endswith("_registered") and value is True
-			for key, value in packages.items()
+			key.endswith("_registered") and value is True for key, value in packages.items()
 		)
 		if selectedKeys:
-			translation["translate_kit_binary_path"] = str(self.pathFromRelative(catalog.runtime.binaryRelativePath))
+			translation["translate_kit_binary_path"] = str(
+				self.pathFromRelative(catalog.runtime.binaryRelativePath),
+			)
 			translation["translate_kit_registered"] = True
 		elif hasRegisteredPackages:
 			translation["translate_kit_registered"] = True
@@ -415,11 +422,7 @@ class ModelInstaller:
 		apps = getObject(updateClientData, "apps")
 		updateClientData["apps"] = apps
 		preserveExistingRuntime = not selectedKeys and hasRegisteredPackages
-		componentIdsToReplace = {
-			package.componentId
-			for package in catalog.packages
-			if package.componentId
-		}
+		componentIdsToReplace = {package.componentId for package in catalog.packages if package.componentId}
 		if not preserveExistingRuntime and catalog.runtime.componentId:
 			componentIdsToReplace.add(catalog.runtime.componentId)
 		for componentId in componentIdsToReplace:

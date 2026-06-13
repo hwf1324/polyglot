@@ -214,7 +214,10 @@ class ModelManagerDialog(nvdaControls.DPIScaledDialog):
 		self.reloadButton.Bind(wx.EVT_BUTTON, self.onReloadCatalog)
 		self.openTargetButton.Bind(wx.EVT_BUTTON, lambda evt: self.openDirectory(self.installer.profileDir))
 		self.clearCacheButton.Bind(wx.EVT_BUTTON, self.onClearCache)
-		self.openTempButton.Bind(wx.EVT_BUTTON, lambda evt: self.openDirectory(self.installer.tempDownloadDir))
+		self.openTempButton.Bind(
+			wx.EVT_BUTTON,
+			lambda evt: self.openDirectory(self.installer.tempDownloadDir),
+		)
 		for button in (self.reloadButton, self.openTargetButton, self.clearCacheButton, self.openTempButton):
 			advancedButtons.Add(button)
 			advancedButtons.AddSpacer(8)
@@ -430,7 +433,11 @@ class ModelManagerDialog(nvdaControls.DPIScaledDialog):
 			self.packageList.DeleteAllItems()
 			for index, package in enumerate(self.packages):
 				self.packageList.InsertItem(index, pairDisplayName(package))
-				self.packageList.SetItem(index, 1, _("installed") if package.key in installed else _("not installed"))
+				self.packageList.SetItem(
+					index,
+					1,
+					_("installed") if package.key in installed else _("not installed"),
+				)
 				self.packageList.SetItem(index, 2, self.formatPackageSize(package))
 				self.packageList.SetItem(index, 3, package.version)
 				self.packageList.CheckItem(index, package.key in checkedKeys)
@@ -480,8 +487,7 @@ class ModelManagerDialog(nvdaControls.DPIScaledDialog):
 		names = "\n".join(f"  - {pairDisplayName(package)}" for package in toRemove)
 		answer = gui.messageBox(
 			_(
-				"The following installed model package(s) will be removed:\n\n"
-				"{names}\n\nContinue?",
+				"The following installed model package(s) will be removed:\n\n{names}\n\nContinue?",
 			).format(names=names),
 			_("Polyglot ChromeAI Model Manager"),
 			wx.YES_NO | wx.ICON_WARNING,
@@ -551,7 +557,9 @@ class ModelManagerDialog(nvdaControls.DPIScaledDialog):
 	def refreshApplyButton(self) -> None:
 		"""Refresh apply button label and enabled state."""
 		self.applyButton.SetLabel(_("Apply changes ({count})").format(count=self.pendingOperationCount))
-		self.applyButton.Enable(not self.isBusy and self.catalog is not None and self.pendingOperationCount > 0)
+		self.applyButton.Enable(
+			not self.isBusy and self.catalog is not None and self.pendingOperationCount > 0,
+		)
 
 	def setAdvancedVisible(self, visible: bool) -> None:
 		"""Set advanced settings visibility."""
@@ -616,6 +624,7 @@ class ModelManagerDialog(nvdaControls.DPIScaledDialog):
 		done: Callable[[_WorkerResult | BaseException], None],
 	) -> None:
 		"""Run a blocking operation in a daemon thread and post completion to wx."""
+
 		def run() -> None:
 			try:
 				result = target()

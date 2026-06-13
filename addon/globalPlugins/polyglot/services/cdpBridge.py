@@ -86,7 +86,11 @@ class CdpBridge:
 				continue
 		candidates = [
 			Path(os.environ.get("PROGRAMFILES", "")) / "Google" / "Chrome" / "Application" / "chrome.exe",
-			Path(os.environ.get("PROGRAMFILES(X86)", "")) / "Google" / "Chrome" / "Application" / "chrome.exe",
+			Path(os.environ.get("PROGRAMFILES(X86)", ""))
+			/ "Google"
+			/ "Chrome"
+			/ "Application"
+			/ "chrome.exe",
 			Path(os.environ.get("LOCALAPPDATA", "")) / "Google" / "Chrome" / "Application" / "chrome.exe",
 		]
 		for candidate in candidates:
@@ -182,7 +186,10 @@ class CdpBridge:
 		for attempt in range(attempts):
 			try:
 				versionInfo = self._readJsonFromPort(port, "/json/version", timeout=timeout)
-				if not isinstance(versionInfo, dict) or not self._matchesBrowserPath(versionInfo, browserPath):
+				if not isinstance(versionInfo, dict) or not self._matchesBrowserPath(
+					versionInfo,
+					browserPath,
+				):
 					if attempt + 1 < attempts and retryDelay:
 						time.sleep(retryDelay)
 					continue
@@ -491,7 +498,9 @@ class CdpBridge:
 		if self._chromeProcess:
 			processId = self._chromeProcess.pid
 			if not self._ownsBrowser:
-				log.debug(f"Chrome CDP process {processId} was not started by this bridge; leaving it running.")
+				log.debug(
+					f"Chrome CDP process {processId} was not started by this bridge; leaving it running.",
+				)
 			elif self._chromeProcess.poll() is not None:
 				log.debug(f"Chrome CDP process {processId} has already exited.")
 			else:

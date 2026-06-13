@@ -167,7 +167,9 @@ class ModelCatalog:
 		except (TypeError, ValueError):
 			schemaVersion = 0
 		if schemaVersion != 1:
-			raise RuntimeError(_("Unsupported catalog schema version: {version}").format(version=schemaVersion))
+			raise RuntimeError(
+				_("Unsupported catalog schema version: {version}").format(version=schemaVersion),
+			)
 		rawPackages = rawData.get("packages", [])
 		if not isinstance(rawPackages, list):
 			rawPackages = []
