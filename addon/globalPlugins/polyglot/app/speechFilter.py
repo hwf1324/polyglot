@@ -50,10 +50,13 @@ _origGetFormatFieldSpeech: Callable | None = None
 _origGetControlFieldSpeech: Callable | None = None
 _origGetSpellingSpeech: Callable | None = None
 _origPackageGetSpellingSpeech: Callable | None = None
+_origSpeakTypedCharacters: Callable | None = None
+_origPackageSpeakTypedCharacters: Callable | None = None
 _origGetSelectionMessageSpeech: Callable | None = None
 _origPackageGetSelectionMessageSpeech: Callable | None = None
 _origGetIndentationSpeech: Callable | None = None
 _origPackageGetIndentationSpeech: Callable | None = None
+_suppressAutoTranslationDepth = 0
 
 
 def _markStringsUntranslatable(sequence: list[Any]) -> list[Any]:
@@ -115,6 +118,16 @@ def _hookedGetSpellingSpeech(*args, **kwargs):
 	return _markGeneratedStringsUntranslatable(_origGetSpellingSpeech(*args, **kwargs))
 
 
+def _hookedSpeakTypedCharacters(ch: str) -> None:
+	"""Speaks typed echo without capturing it for translation."""
+	global _suppressAutoTranslationDepth
+	_suppressAutoTranslationDepth += 1
+	try:
+		_origSpeakTypedCharacters(ch)
+	finally:
+		_suppressAutoTranslationDepth -= 1
+
+
 def _hookedGetSelectionMessageSpeech(message: str, text: str | list[Any]) -> list[Any]:
 	"""Marks selection prefixes/suffixes as metadata while preserving selected text."""
 	prefix, sep, suffix = message.partition("%s")
@@ -170,6 +183,7 @@ class SpeechFilter:
 		self._patchGetFormatFieldSpeech()
 		self._patchGetControlFieldSpeech()
 		self._patchGetSpellingSpeech()
+		self._patchSpeakTypedCharacters()
 		self._patchGetSelectionMessageSpeech()
 		self._patchGetIndentationSpeech()
 
@@ -177,6 +191,7 @@ class SpeechFilter:
 		"""Unregisters the speech filter, cue suppression hook, and restores speech hooks."""
 		self._unpatchGetIndentationSpeech()
 		self._unpatchGetSelectionMessageSpeech()
+		self._unpatchSpeakTypedCharacters()
 		self._unpatchGetSpellingSpeech()
 		self._unpatchGetControlFieldSpeech()
 		self._unpatchGetFormatFieldSpeech()
@@ -252,6 +267,24 @@ class SpeechFilter:
 		if _origPackageGetSpellingSpeech is not None:
 			speech.getSpellingSpeech = _origPackageGetSpellingSpeech
 			_origPackageGetSpellingSpeech = None
+
+	def _patchSpeakTypedCharacters(self) -> None:
+		"""Patches typed echo so typed input is not auto-translated."""
+		global _origSpeakTypedCharacters, _origPackageSpeakTypedCharacters
+		_origSpeakTypedCharacters = speech.speech.speakTypedCharacters
+		_origPackageSpeakTypedCharacters = speech.speakTypedCharacters
+		speech.speech.speakTypedCharacters = _hookedSpeakTypedCharacters
+		speech.speakTypedCharacters = _hookedSpeakTypedCharacters
+
+	def _unpatchSpeakTypedCharacters(self) -> None:
+		"""Restores ``speakTypedCharacters`` at both levels."""
+		global _origSpeakTypedCharacters, _origPackageSpeakTypedCharacters
+		if _origSpeakTypedCharacters is not None:
+			speech.speech.speakTypedCharacters = _origSpeakTypedCharacters
+			_origSpeakTypedCharacters = None
+		if _origPackageSpeakTypedCharacters is not None:
+			speech.speakTypedCharacters = _origPackageSpeakTypedCharacters
+			_origPackageSpeakTypedCharacters = None
 
 	def _patchGetSelectionMessageSpeech(self) -> None:
 		"""Patches selection speech so only selected text is translated."""
@@ -335,6 +368,8 @@ class SpeechFilter:
 		# bypass auto-translate interception to avoid being swallowed.
 		if self._suppressCapture > 0:
 			self._suppressCapture -= 1
+			return sequence
+		if _suppressAutoTranslationDepth > 0:
 			return sequence
 		if not textToSave:
 			if self._isSpeakingTranslation:
