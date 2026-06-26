@@ -48,6 +48,8 @@ _TRANSLATABLE_KEYS = (
 _origGetPropertiesSpeech: Callable | None = None
 _origGetFormatFieldSpeech: Callable | None = None
 _origGetControlFieldSpeech: Callable | None = None
+_origGetSpellingSpeech: Callable | None = None
+_origPackageGetSpellingSpeech: Callable | None = None
 _origGetSelectionMessageSpeech: Callable | None = None
 _origPackageGetSelectionMessageSpeech: Callable | None = None
 _origGetIndentationSpeech: Callable | None = None
@@ -57,6 +59,12 @@ _origPackageGetIndentationSpeech: Callable | None = None
 def _markStringsUntranslatable(sequence: list[Any]) -> list[Any]:
 	"""Marks all strings in a speech sequence as NVDA metadata."""
 	return [_UntranslatableString(s) if isinstance(s, str) else s for s in sequence]
+
+
+def _markGeneratedStringsUntranslatable(sequence):
+	"""Marks generated speech strings as NVDA metadata."""
+	for item in sequence:
+		yield _UntranslatableString(item) if isinstance(item, str) else item
 
 
 def _hookedGetPropertiesSpeech(reason=speech.speech.OutputReason.QUERY, **kwargs):
@@ -100,6 +108,11 @@ def _hookedGetControlFieldSpeech(attrs=None, *args, **kwargs):
 		else:
 			new_result.append(s)
 	return new_result
+
+
+def _hookedGetSpellingSpeech(*args, **kwargs):
+	"""Marks spelling and character navigation speech as metadata."""
+	return _markGeneratedStringsUntranslatable(_origGetSpellingSpeech(*args, **kwargs))
 
 
 def _hookedGetSelectionMessageSpeech(message: str, text: str | list[Any]) -> list[Any]:
@@ -156,6 +169,7 @@ class SpeechFilter:
 		self._patchGetPropertiesSpeech()
 		self._patchGetFormatFieldSpeech()
 		self._patchGetControlFieldSpeech()
+		self._patchGetSpellingSpeech()
 		self._patchGetSelectionMessageSpeech()
 		self._patchGetIndentationSpeech()
 
@@ -163,6 +177,7 @@ class SpeechFilter:
 		"""Unregisters the speech filter, cue suppression hook, and restores speech hooks."""
 		self._unpatchGetIndentationSpeech()
 		self._unpatchGetSelectionMessageSpeech()
+		self._unpatchGetSpellingSpeech()
 		self._unpatchGetControlFieldSpeech()
 		self._unpatchGetFormatFieldSpeech()
 		self._unpatchGetPropertiesSpeech()
@@ -219,6 +234,24 @@ class SpeechFilter:
 			speech.speech.getControlFieldSpeech = _origGetControlFieldSpeech
 			speech.getControlFieldSpeech = _origGetControlFieldSpeech
 			_origGetControlFieldSpeech = None
+
+	def _patchGetSpellingSpeech(self) -> None:
+		"""Patches spelling speech so character metadata is not translated."""
+		global _origGetSpellingSpeech, _origPackageGetSpellingSpeech
+		_origGetSpellingSpeech = speech.speech.getSpellingSpeech
+		_origPackageGetSpellingSpeech = speech.getSpellingSpeech
+		speech.speech.getSpellingSpeech = _hookedGetSpellingSpeech
+		speech.getSpellingSpeech = _hookedGetSpellingSpeech
+
+	def _unpatchGetSpellingSpeech(self) -> None:
+		"""Restores ``getSpellingSpeech`` at both levels."""
+		global _origGetSpellingSpeech, _origPackageGetSpellingSpeech
+		if _origGetSpellingSpeech is not None:
+			speech.speech.getSpellingSpeech = _origGetSpellingSpeech
+			_origGetSpellingSpeech = None
+		if _origPackageGetSpellingSpeech is not None:
+			speech.getSpellingSpeech = _origPackageGetSpellingSpeech
+			_origPackageGetSpellingSpeech = None
 
 	def _patchGetSelectionMessageSpeech(self) -> None:
 		"""Patches selection speech so only selected text is translated."""
