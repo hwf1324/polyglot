@@ -80,6 +80,7 @@ i18nSources: list[str] = pythonSources + ["buildVars.py"]
 excludedFiles: list[str] = [
 	"**/__pycache__/**",
 	"**/*.pyc",
+	"globalPlugins/polyglot/common/resources/.dictionary.pickle.*.tmp",
 	"websocketClientRepo/.git",
 	"websocketClientRepo/.git/**",
 	"websocketClientRepo/.git/**/*",

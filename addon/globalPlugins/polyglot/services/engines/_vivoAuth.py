@@ -12,6 +12,7 @@ import string
 import time
 import urllib.parse
 
+import addonHandler
 from logHandler import log
 
 from ...common import network
@@ -20,6 +21,8 @@ from ...common.exceptions import (
 	NetworkConnectionError,
 	ResponseParsingError,
 )
+
+addonHandler.initTranslation()
 
 __all__ = ["genSignHeaders"]
 

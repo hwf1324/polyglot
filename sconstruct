@@ -3,6 +3,7 @@
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
 
+import importlib.util
 import os
 import os.path
 import sys
@@ -45,9 +46,25 @@ def expandGlobs(patterns: Iterable[str], rootdir: Path = Path(".")) -> list[FS.E
 	return [env.Entry(e) for pattern in patterns for e in rootdir.glob(pattern.lstrip('/'))]
 
 
+def buildWordDictionary(target: list[FS.File], source: list[FS.File], env: object) -> None:
+	"""Compile the source word dictionary using its shared schema module."""
+	moduleSpec = importlib.util.spec_from_file_location("_polyglotWordDictionaryData", source[2].abspath)
+	if moduleSpec is None or moduleSpec.loader is None:
+		raise RuntimeError("Unable to load the word dictionary schema module.")
+	dictionaryData = importlib.util.module_from_spec(moduleSpec)
+	moduleSpec.loader.exec_module(dictionaryData)
+	dictionaryData.compileDictionary(
+		Path(source[0].abspath),
+		Path(target[0].abspath),
+		Path(source[1].abspath),
+	)
+
+
 addonDir: Final = Path("addon/")
 localeDir: Final = addonDir / "locale"
 docsDir: Final = addonDir / "doc"
+wordDictionaryDir: Final = addonDir / "globalPlugins/polyglot/common"
+wordDictionarySourceDir: Final = Path("tools/resource")
 
 
 vars = Variables()
@@ -103,6 +120,21 @@ for dir in langDirs:
 pythonFiles = expandGlobs(buildVars.pythonSources)
 for file in pythonFiles:
 	env.Depends(addon, file)
+
+wordDictionarySource = env.File(wordDictionarySourceDir / "dictionary.json")
+wordDictionaryInflections = env.File(wordDictionarySourceDir / "inflections.json")
+wordDictionaryCompiler = env.File(wordDictionaryDir / "wordDictionaryData.py")
+wordDictionary = env.Command(
+	str(wordDictionaryDir / "resources/dictionary.pickle"),
+	[wordDictionarySource, wordDictionaryInflections, wordDictionaryCompiler],
+	buildWordDictionary,
+)
+env.Precious(wordDictionary)
+env.Clean(
+	addon,
+	expandGlobs([str(wordDictionaryDir / "resources/.dictionary.pickle.*.tmp")]),
+)
+env.Depends(addon, [wordDictionary, env.File(wordDictionaryDir / "resources/README.md")])
 
 # Convert markdown files to html
 # We need at least doc in English and should enable the Help button for the add-on in Add-ons Manager

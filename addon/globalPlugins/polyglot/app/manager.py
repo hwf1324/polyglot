@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from typing import Any
 
+import addonHandler
 import api
 import queueHandler
 from logHandler import log
@@ -15,6 +16,10 @@ from ..services import engineManager
 from .task import TranslationTask
 from ..common import cues
 from ..common.cues import CueType
+
+
+addonHandler.initTranslation()
+
 
 OnSuccessCallback = Callable[[str], None] | None
 OnErrorCallback = Callable[[str], None] | None

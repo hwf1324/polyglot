@@ -8,5 +8,12 @@ manifest.ini
 *.py[co]
 *.nvda-addon
 .sconsign.dblite
+/addon/globalPlugins/polyglot/common/resources/.dictionary.pickle.*.tmp
+/addon/globalPlugins/polyglot/common/resources/dictionary.pickle
+/tools/resource/.candidates.json.*.tmp
+/tools/resource/.dictionary.json.*.tmp
+/tools/resource/.inflections.json.*.tmp
+/tools/resource/ECDICT/
+/tools/resource/candidates.json
 /[0-9]*.[0-9]*.[0-9]*.json
 *.egg-info

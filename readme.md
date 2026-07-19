@@ -14,6 +14,7 @@ The add-on is built around a dynamic engine architecture. Translation engines de
 - Can copy manual translation results to the clipboard automatically.
 - Lets you switch engines and languages without leaving the keyboard.
 - Exposes a dedicated interactive translation dialog for longer or iterative translation work.
+- Provides local English word definitions when NVDA is running in Chinese.
 
 ## Installation
 
@@ -70,6 +71,32 @@ The interactive dialog is designed for longer text and iterative translation wor
 - For LLM-style engines, adjust model and prompt template directly in the dialog.
 - Press `Ctrl+Enter` in the source text box to translate.
 - Copy the result or clear both panes without reopening the window.
+
+## Local English Word Definitions for Chinese NVDA
+
+When NVDA's interface language is Chinese, Polyglot adds an offline English-to-Chinese dictionary to the
+command that reports the word at the review cursor:
+
+1. Press `numpad5` once in the desktop keyboard layout to read the word at the review cursor.
+2. Press it twice to hear the word spelled out.
+3. Press it three times to hear the Chinese definition when the complete word is found locally.
+
+Add-ons that call NVDA's `speech.spellTextInfo` receive the same behavior. If a line contains only one
+English word, pressing the current-line command three times also reports its definition. Lookup handles one
+layer of common leading or trailing sentence punctuation, safe spelling variants, and common plurals,
+tenses, participles, comparatives, and superlatives. Exact entries take priority. When a spelling can refer
+to several entries, Polyglot announces up to three candidates with their first senses. If a two- or
+three-character uppercase word only matches a lowercase entry, Polyglot reports the possible lowercase
+meaning and warns that it may instead be an abbreviation. Words that look valid but are not included are
+reported as missing. Single characters, multiword lines, and unsupported text keep NVDA's original character
+descriptions. Lookup is fully local and never sends the word to a translation service.
+
+Current dictionary size:
+
+- 122,370 English entries, including about 118,460 complete headwords that can be queried directly.
+- 34,859 validated inflected forms.
+- About 154,800 complete word forms when case and common spelling variants are included.
+- The bundled dictionary is about 6.8 MB and requires no separate download.
 
 ## Settings Guide
 

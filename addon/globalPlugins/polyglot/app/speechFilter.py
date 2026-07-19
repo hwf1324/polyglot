@@ -1,16 +1,33 @@
 # -*- coding: utf-8 -*-
 
+import re
 import time
 from typing import Any, Callable
 
+import addonHandler
+import languageHandler
 import speech
 import speech.speech
+import textInfos
 import ui
 from speech.extensions import filter_speechSequence
 
 from ..common import cues
 from ..common import config
+from ..common.wordDictionary import EnglishChineseDictionary, WordLookupResult
 from .manager import TranslationManager
+
+
+addonHandler.initTranslation()
+
+
+_MAX_SPOKEN_WORD_MATCHES = 3
+_DEFINITION_SEPARATOR_PATTERN = re.compile(r"[;,；，]")
+
+
+def _summarizeDefinition(definition: str) -> str:
+	"""Return the first sense of a definition for a compact candidate list."""
+	return _DEFINITION_SEPARATOR_PATTERN.split(definition, maxsplit=1)[0].strip()
 
 
 class TranslatableString(str):
@@ -181,12 +198,20 @@ def _hookedGetIndentationSpeech(indentation: str, formatConfig: dict[str, Any]) 
 
 
 class SpeechFilter:
+	"""Filters Polyglot speech and manages the NVDA speech hooks it installs."""
+
 	# Annotate instance variables at the class level
 	manager: TranslationManager
 	lastSpokenText: str
 	_isSpeakingTranslation: bool
 	_suppressCapture: int
 	_gracePeriodEnd: float
+	_wordDictionary: EnglishChineseDictionary
+	_isWordDefinitionHookActive: bool
+	_origModuleSpellTextInfo: Callable[..., None] | None
+	_origPackageSpellTextInfo: Callable[..., None] | None
+	_hookedModuleSpellTextInfo: Callable[..., None] | None
+	_hookedPackageSpellTextInfo: Callable[..., None] | None
 
 	def __init__(self, manager: TranslationManager) -> None:
 		super().__init__()
@@ -195,6 +220,12 @@ class SpeechFilter:
 		self._isSpeakingTranslation = False
 		self._suppressCapture = 0
 		self._gracePeriodEnd = 0.0
+		self._wordDictionary = EnglishChineseDictionary()
+		self._isWordDefinitionHookActive = False
+		self._origModuleSpellTextInfo = None
+		self._origPackageSpellTextInfo = None
+		self._hookedModuleSpellTextInfo = None
+		self._hookedPackageSpellTextInfo = None
 
 	def register(self) -> None:
 		"""Registers the speech filter, cue suppression hook, and speech hooks."""
@@ -204,6 +235,7 @@ class SpeechFilter:
 		self._patchGetFormatFieldSpeech()
 		self._patchGetControlFieldSpeech()
 		self._patchGetSpellingSpeech()
+		self._patchSpellTextInfo()
 		self._patchSpeakTypedCharacters()
 		self._patchSpeakText()
 		self._patchGetSelectionMessageSpeech()
@@ -215,6 +247,7 @@ class SpeechFilter:
 		self._unpatchGetSelectionMessageSpeech()
 		self._unpatchSpeakText()
 		self._unpatchSpeakTypedCharacters()
+		self._unpatchSpellTextInfo()
 		self._unpatchGetSpellingSpeech()
 		self._unpatchGetControlFieldSpeech()
 		self._unpatchGetFormatFieldSpeech()
@@ -290,6 +323,123 @@ class SpeechFilter:
 		if _origPackageGetSpellingSpeech is not None:
 			speech.getSpellingSpeech = _origPackageGetSpellingSpeech
 			_origPackageGetSpellingSpeech = None
+
+	def _patchSpellTextInfo(self) -> None:
+		"""Patch repeated TextInfo spelling with local word definitions for Chinese NVDA."""
+		if self._isWordDefinitionHookActive or not self._isChineseNvdaLanguage():
+			return
+
+		moduleOriginal = speech.speech.spellTextInfo
+		packageOriginal = speech.spellTextInfo
+		moduleHook = self._createSpellTextInfoHook(moduleOriginal)
+		packageHook = self._createSpellTextInfoHook(packageOriginal)
+		self._origModuleSpellTextInfo = moduleOriginal
+		self._origPackageSpellTextInfo = packageOriginal
+		self._hookedModuleSpellTextInfo = moduleHook
+		self._hookedPackageSpellTextInfo = packageHook
+		self._isWordDefinitionHookActive = True
+		speech.speech.spellTextInfo = moduleHook
+		speech.spellTextInfo = packageHook
+
+	def _unpatchSpellTextInfo(self) -> None:
+		"""Disable local definitions and safely restore both ``spellTextInfo`` aliases."""
+		self._isWordDefinitionHookActive = False
+		if (
+			self._hookedModuleSpellTextInfo is not None
+			and self._origModuleSpellTextInfo is not None
+			and speech.speech.spellTextInfo is self._hookedModuleSpellTextInfo
+		):
+			speech.speech.spellTextInfo = self._origModuleSpellTextInfo
+		if (
+			self._hookedPackageSpellTextInfo is not None
+			and self._origPackageSpellTextInfo is not None
+			and speech.spellTextInfo is self._hookedPackageSpellTextInfo
+		):
+			speech.spellTextInfo = self._origPackageSpellTextInfo
+		self._origModuleSpellTextInfo = None
+		self._origPackageSpellTextInfo = None
+		self._hookedModuleSpellTextInfo = None
+		self._hookedPackageSpellTextInfo = None
+
+	def _createSpellTextInfoHook(
+		self,
+		original: Callable[..., None],
+	) -> Callable[..., None]:
+		"""Create a wrapper which preserves the function chain installed at one import level."""
+
+		def hookedSpellTextInfo(
+			info: textInfos.TextInfo,
+			useCharacterDescriptions: bool = False,
+			priority: speech.Spri | None = None,
+		) -> None:
+			"""Speak a local definition or delegate unchanged to NVDA's spelling implementation."""
+			if self._isWordDefinitionHookActive and useCharacterDescriptions:
+				lookupResult = self._wordDictionary.lookup(info.text)
+				if lookupResult is not None:
+					self._speakWordLookupResult(lookupResult, priority)
+					return
+			original(
+				info,
+				useCharacterDescriptions=useCharacterDescriptions,
+				priority=priority,
+			)
+
+		return hookedSpellTextInfo
+
+	@staticmethod
+	def _isChineseNvdaLanguage() -> bool:
+		"""Return whether NVDA's current interface language is Chinese."""
+		normalizedLanguage = languageHandler.normalizeLanguage(languageHandler.getLanguage())
+		return bool(normalizedLanguage and normalizedLanguage.partition("_")[0] == "zh")
+
+	@staticmethod
+	def _formatWordLookupResult(result: WordLookupResult) -> str:
+		"""Format a local word lookup result for concise, localized speech."""
+		if not result.matches:
+			# Translators: Spoken when a valid-looking English word is absent from the bundled local
+			# dictionary. {word} is the word reviewed by the user.
+			return _("The local dictionary does not contain {word}.").format(word=result.word)
+
+		if len(result.matches) == 1:
+			entry, definition = result.matches[0]
+			if not result.isUppercaseFallback:
+				return definition
+			return _(
+				# Translators: Spoken when an all-capital word only matches a lowercase dictionary entry.
+				# {word} is the reviewed text, {entry} is the lowercase headword, and {definition} is its
+				# bundled definition.
+				"When read as lowercase {entry}, {word} may mean: {definition}. "
+				+ "In all caps, it may also be an abbreviation.",
+			).format(
+				entry=entry,
+				word=result.word,
+				definition=_summarizeDefinition(definition),
+			)
+
+		# Translators: One item in a spoken list of possible dictionary entries. {entry} is the
+		# dictionary headword and {definition} is its bundled definition.
+		candidateTemplate = _("{entry}: {definition}.")
+		candidates = " ".join(
+			candidateTemplate.format(entry=entry, definition=_summarizeDefinition(definition))
+			for entry, definition in result.matches[:_MAX_SPOKEN_WORD_MATCHES]
+		)
+		# Translators: Introduces a spoken list of up to three possible dictionary entries.
+		# {entries} contains the entries and their definitions.
+		return _("Possibilities: {entries}").format(entries=candidates)
+
+	@classmethod
+	def _speakWordLookupResult(
+		cls,
+		result: WordLookupResult,
+		priority: speech.Spri | None,
+	) -> None:
+		"""Speak one lookup result without capturing or automatically translating it."""
+		global _suppressAutoTranslationDepth
+		_suppressAutoTranslationDepth += 1
+		try:
+			speech.speakMessage(cls._formatWordLookupResult(result), priority=priority)
+		finally:
+			_suppressAutoTranslationDepth -= 1
 
 	def _patchSpeakTypedCharacters(self) -> None:
 		"""Patches typed echo so typed input is not auto-translated."""

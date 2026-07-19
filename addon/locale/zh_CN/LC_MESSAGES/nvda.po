@@ -248,6 +248,38 @@ msgstr "发生未知错误"
 msgid "Auto-translation disabled due to repeated failures."
 msgstr "自动翻译因连续失败已被禁用。"
 
+#. Translators: Spoken when a valid-looking English word is absent from the bundled local
+#. dictionary. {word} is the word reviewed by the user.
+#: addon\globalPlugins\polyglot\app\speechFilter.py:397
+#, python-brace-format
+msgid "The local dictionary does not contain {word}."
+msgstr "本地词典未收录“{word}”。"
+
+#. Translators: Spoken when an all-capital word only matches a lowercase dictionary entry.
+#. {word} is the reviewed text, {entry} is the lowercase headword, and {definition} is its
+#. bundled definition.
+#: addon\globalPlugins\polyglot\app\speechFilter.py:407
+#, python-brace-format
+msgid ""
+"When read as lowercase {entry}, {word} may mean: {definition}. In all caps, "
+"it may also be an abbreviation."
+msgstr ""
+"“{word}”按小写词“{entry}”读取时，可能表示：{definition}；但全大写时也可能是缩写。"
+
+#. Translators: One item in a spoken list of possible dictionary entries. {entry} is the
+#. dictionary headword and {definition} is its bundled definition.
+#: addon\globalPlugins\polyglot\app\speechFilter.py:417
+#, python-brace-format
+msgid "{entry}: {definition}."
+msgstr "{entry}，{definition}。"
+
+#. Translators: Introduces a spoken list of up to three possible dictionary entries.
+#. {entries} contains the entries and their definitions.
+#: addon\globalPlugins\polyglot\app\speechFilter.py:428
+#, python-brace-format
+msgid "Possibilities: {entries}"
+msgstr "可能是：{entries}"
+
 #: addon\globalPlugins\polyglot\common\cues.py:171
 #, python-format
 msgid "%d percent"
