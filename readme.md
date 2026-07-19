@@ -74,8 +74,8 @@ The interactive dialog is designed for longer text and iterative translation wor
 
 ## Local English Word Definitions for Chinese NVDA
 
-When NVDA's interface language is Chinese, Polyglot adds an offline English-to-Chinese dictionary to the
-command that reports the word at the review cursor:
+When NVDA's interface language is Chinese, including Simplified and Traditional Chinese, Polyglot adds an
+offline English-to-Chinese dictionary to the command that reports the word at the review cursor:
 
 1. Press `numpad5` once in the desktop keyboard layout to read the word at the review cursor.
 2. Press it twice to hear the word spelled out.
@@ -91,6 +91,13 @@ meaning and warns that it may instead be an abbreviation. Words that look valid 
 reported as missing. Single characters, multiword lines, and unsupported text keep NVDA's original character
 descriptions. Lookup is fully local and never sends the word to a translation service.
 
+The Translate Selection, Translate Clipboard, and Translate Last Spoken commands also use the local dictionary
+for complete English words in English/auto-detect → Simplified or Traditional Chinese requests, and for
+English-word input in Chinese → English requests. Other content continues through the selected translation engine.
+
+Translation commands and text review have separate local-dictionary options. Both are enabled by default;
+disabling either restores that command's original behavior.
+
 Current dictionary size:
 
 - 122,370 English entries, including about 118,460 complete headwords that can be queried directly.
@@ -103,6 +110,9 @@ Current dictionary size:
 ### Common Settings
 
 - `Copy manual translation results to clipboard`: Copies manual translation output after a successful request.
+- `Prefer the local English-Chinese dictionary for selected text, clipboard text, and last spoken text`: Controls local
+  lookup for those three translation commands.
+- `Use the local English-Chinese dictionary in text review`: Controls local definitions for NVDA text review.
 - `Enable smart speech filter`: When translating spoken NVDA output, skips non-content speech such as roles, states, location, and formatting details where possible.
 - `Clear Cache`: Clears the persistent translation cache and shows the current item count in the button label.
 

@@ -12,6 +12,9 @@ from unittest.mock import Mock
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+addonHandler = ModuleType("addonHandler")
+setattr(addonHandler, "initTranslation", Mock())
+sys.modules.setdefault("addonHandler", addonHandler)
 logHandler = ModuleType("logHandler")
 setattr(logHandler, "log", Mock())
 sys.modules.setdefault("logHandler", logHandler)

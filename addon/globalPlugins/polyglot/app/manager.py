@@ -12,6 +12,7 @@ from ..common import config
 from ..common.cache import TranslationCache
 from ..common.exceptions import EngineError
 from ..common import languages
+from ..common.wordDictionary import EnglishChineseDictionary, formatWordLookupResult
 from ..services import engineManager
 from .task import TranslationTask
 from ..common import cues
@@ -24,10 +25,45 @@ addonHandler.initTranslation()
 OnSuccessCallback = Callable[[str], None] | None
 OnErrorCallback = Callable[[str], None] | None
 
+_CHINESE_DICTIONARY_TARGET_CODES = frozenset(
+	("cht", "zh", "zh-cn", "zh-chs", "zh-hans", "zh-hant", "zh-hk", "zh-tw"),
+)
+
+
+def _normalizeLanguageCode(language: str | None) -> str:
+	"""Normalize language-code spelling for local dictionary direction checks."""
+	return (language or "").strip().replace("_", "-").casefold()
+
+
+def _isEnglishLanguage(language: str | None) -> bool:
+	"""Return whether a language code identifies English."""
+	return _normalizeLanguageCode(language).partition("-")[0] == "en"
+
+
+def _isChineseLanguage(language: str | None) -> bool:
+	"""Return whether a language code identifies a Chinese source language."""
+	normalizedLanguage = _normalizeLanguageCode(language)
+	return normalizedLanguage in ("cht", "yue", "wyw") or normalizedLanguage.partition("-")[0] == "zh"
+
+
+def _isChineseDictionaryTarget(language: str | None) -> bool:
+	"""Return whether a language code identifies a supported Chinese dictionary target."""
+	return _normalizeLanguageCode(language) in _CHINESE_DICTIONARY_TARGET_CODES
+
+
+def _isAutoDetectedLanguage(language: str | None, autoDetectCode: str | None) -> bool:
+	"""Return whether a selected source code is this engine's auto-detect code."""
+	return (
+		language is not None
+		and autoDetectCode is not None
+		and _normalizeLanguageCode(language) == _normalizeLanguageCode(autoDetectCode)
+	)
+
 
 class TranslationManager:
 	# Annotations for instance variables defined and managed by this class
 	cache: TranslationCache
+	wordDictionary: EnglishChineseDictionary
 	lastTranslation: str | None
 	consecutiveFailures: int
 	_currentTask: TranslationTask | None
@@ -36,6 +72,7 @@ class TranslationManager:
 	def __init__(self) -> None:
 		super().__init__()
 		self.cache = TranslationCache()
+		self.wordDictionary = EnglishChineseDictionary()
 		self.lastTranslation = None
 		self.consecutiveFailures = 0
 		self._currentTask = None
@@ -248,6 +285,7 @@ class TranslationManager:
 		onError: OnErrorCallback = None,
 		langFrom: str | None = None,
 		langTo: str | None = None,
+		preferLocalDictionary: bool = False,
 	) -> None:
 		if not text or not text.strip():
 			if isManual:
@@ -273,7 +311,35 @@ class TranslationManager:
 		if engineId not in conf["engines"]:
 			conf["engines"][engineId] = {}
 		engineConfig = conf["engines"][engineId].dict()
-		if not currentEngine.isEnabled(engineConfig):
+		shouldUseLocalDictionary = (
+			isManual and preferLocalDictionary and conf.get("enableLocalDictionaryForTranslation", True)
+		)
+		currentEngineEnabled = currentEngine.isEnabled(engineConfig)
+		localTranslation = None
+		if shouldUseLocalDictionary and not currentEngineEnabled:
+			# A disabled engine still provides the configured direction for an offline lookup.
+			try:
+				dictionaryAutoDetectCode = currentEngine.autoDetectCode
+				dictionaryLangFrom = (
+					langFrom
+					if langFrom is not None
+					else engineConfig.get("langFrom", currentEngine.defaultSourceLanguage)
+				)
+				dictionaryLangTo = (
+					langTo
+					if langTo is not None
+					else engineConfig.get("langTo", currentEngine.defaultTargetLanguage)
+				)
+			except NotImplementedError:
+				pass
+			else:
+				localTranslation = self._getLocalDictionaryTranslation(
+					text,
+					dictionaryLangFrom,
+					dictionaryLangTo,
+					dictionaryAutoDetectCode,
+				)
+		if localTranslation is None and not currentEngineEnabled:
 			fallbackEngine = engineManager.getNextEnabledEngine(engineId)
 			if not fallbackEngine:
 				log.info(
@@ -317,6 +383,23 @@ class TranslationManager:
 			log.info("A new translation request is overriding the previous one. Cancelling.")
 			self._currentTask.cancel()
 			cues.stopPeriodicCue()
+		if shouldUseLocalDictionary and localTranslation is None:
+			localTranslation = self._getLocalDictionaryTranslation(
+				text,
+				langFrom,
+				langTo,
+				currentEngine.autoDetectCode,
+			)
+		if localTranslation is not None:
+			log.debug("Local dictionary matched a manual translation request; skipping translation engine.")
+			self._onTranslationComplete(
+				{"translation": localTranslation, "error": None},
+				isManual=isManual,
+				allowCopy=allowCopy,
+				onSuccess=onSuccess,
+				onError=onError,
+			)
+			return
 		cacheKey = self.cache.buildKey(langFrom, langTo, text)
 		cachedResult = self.cache.get(cacheKey)
 		if cachedResult:
@@ -357,6 +440,25 @@ class TranslationManager:
 		)
 		self._currentTask = task
 		task.start()
+
+	def _getLocalDictionaryTranslation(
+		self,
+		text: str,
+		langFrom: str | None,
+		langTo: str | None,
+		autoDetectCode: str | None,
+	) -> str | None:
+		"""Return a local definition when the manual request has a supported language direction."""
+		sourceIsEnglish = _isEnglishLanguage(langFrom) or _isAutoDetectedLanguage(langFrom, autoDetectCode)
+		englishToChinese = sourceIsEnglish and _isChineseDictionaryTarget(langTo)
+		chineseToEnglish = _isChineseLanguage(langFrom) and _isEnglishLanguage(langTo)
+		if not englishToChinese and not chineseToEnglish:
+			return None
+
+		lookupResult = self.wordDictionary.lookup(text)
+		if lookupResult is None or not lookupResult.matches:
+			return None
+		return formatWordLookupResult(lookupResult)
 
 	def _onTranslationComplete(
 		self,

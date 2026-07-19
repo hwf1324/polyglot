@@ -7,6 +7,8 @@ configSpec: ConfigObj = ConfigObj(
 		# Global settings
 		'engine = string(default="google")',
 		"copyResult = boolean(default=False)",
+		"enableLocalDictionaryForTranslation = boolean(default=True)",
+		"enableLocalDictionaryForTextReview = boolean(default=True)",
 		"enableSmartFilter = boolean(default=True)",
 		"",
 		# Define an 'engines' subsection for engine-specific configurations.

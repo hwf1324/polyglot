@@ -68,6 +68,22 @@ class TranslationSettingsPanel(SettingsPanel):
 		self.copyResultCheckbox = commonSHelper.addItem(
 			wx.CheckBox(self, label=_("Copy manual translation results to clipboard")),
 		)
+		self.enableLocalDictionaryForTranslationCheckbox = commonSHelper.addItem(
+			wx.CheckBox(
+				self,
+				# Translators: Checkbox controlling local dictionary lookup for the three manual translation commands.
+				label=_(
+					"Prefer the local English-Chinese dictionary for selected text, clipboard text, and last spoken text",
+				),
+			),
+		)
+		self.enableLocalDictionaryForTextReviewCheckbox = commonSHelper.addItem(
+			wx.CheckBox(
+				self,
+				# Translators: Checkbox controlling local dictionary definitions in NVDA text review.
+				label=_("Use the local English-Chinese dictionary in text review"),
+			),
+		)
 		self.enableSmartFilterCheckbox = commonSHelper.addItem(
 			wx.CheckBox(
 				self,
@@ -81,6 +97,8 @@ class TranslationSettingsPanel(SettingsPanel):
 
 		self.engineChoice.Bind(wx.EVT_CHOICE, self.onEngineChanged)
 		self.copyResultCheckbox.Bind(wx.EVT_CHECKBOX, self.onAnyControlChanged)
+		self.enableLocalDictionaryForTranslationCheckbox.Bind(wx.EVT_CHECKBOX, self.onAnyControlChanged)
+		self.enableLocalDictionaryForTextReviewCheckbox.Bind(wx.EVT_CHECKBOX, self.onAnyControlChanged)
 		self.enableSmartFilterCheckbox.Bind(wx.EVT_CHECKBOX, self.onAnyControlChanged)
 		self.clearCacheButton.Bind(wx.EVT_BUTTON, self.onClearCache)
 
@@ -98,6 +116,8 @@ class TranslationSettingsPanel(SettingsPanel):
 
 		conf["engine"] = self.uiModel["engine"]
 		conf["copyResult"] = self.uiModel["copyResult"]
+		conf["enableLocalDictionaryForTranslation"] = self.uiModel["enableLocalDictionaryForTranslation"]
+		conf["enableLocalDictionaryForTextReview"] = self.uiModel["enableLocalDictionaryForTextReview"]
 		conf["enableSmartFilter"] = self.uiModel["enableSmartFilter"]
 
 		for engineId, controls in self.dynamicControls.items():
@@ -108,6 +128,10 @@ class TranslationSettingsPanel(SettingsPanel):
 			engineConf = conf["engines"][engineId]
 			for _unused, info in controls.items():
 				info["handler"].saveToConfig(info["control"], engineConf, info["spec"])
+
+	def postSave(self) -> None:
+		"""Apply local dictionary hook changes after every settings panel saves successfully."""
+		config.localDictionarySettingsChanged.notify()
 
 	def onEngineChanged(self, event: wx.Event) -> None:
 		"""Debounce the engine switch event to avoid stutter on rapid changes."""
@@ -154,6 +178,12 @@ class TranslationSettingsPanel(SettingsPanel):
 				self.engineChoice.SetStringSelection(self.engines[engineId].name)
 
 			self.copyResultCheckbox.SetValue(conf.get("copyResult", True))
+			self.enableLocalDictionaryForTranslationCheckbox.SetValue(
+				conf.get("enableLocalDictionaryForTranslation", True),
+			)
+			self.enableLocalDictionaryForTextReviewCheckbox.SetValue(
+				conf.get("enableLocalDictionaryForTextReview", True),
+			)
 			self.enableSmartFilterCheckbox.SetValue(conf.get("enableSmartFilter", True))
 
 			self._switchEnginePanel()
@@ -258,6 +288,8 @@ class TranslationSettingsPanel(SettingsPanel):
 		self.uiModel = {
 			"engine": engineId,
 			"copyResult": self.copyResultCheckbox.IsChecked(),
+			"enableLocalDictionaryForTranslation": self.enableLocalDictionaryForTranslationCheckbox.IsChecked(),
+			"enableLocalDictionaryForTextReview": self.enableLocalDictionaryForTextReviewCheckbox.IsChecked(),
 			"enableSmartFilter": self.enableSmartFilterCheckbox.IsChecked(),
 		}
 

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import re
 import time
 from typing import Any, Callable
 
 import addonHandler
+import config as nvdaConfig
 import languageHandler
 import speech
 import speech.speech
@@ -14,20 +14,15 @@ from speech.extensions import filter_speechSequence
 
 from ..common import cues
 from ..common import config
-from ..common.wordDictionary import EnglishChineseDictionary, WordLookupResult
+from ..common.wordDictionary import (
+	EnglishChineseDictionary,
+	WordLookupResult,
+	formatWordLookupResult,
+)
 from .manager import TranslationManager
 
 
 addonHandler.initTranslation()
-
-
-_MAX_SPOKEN_WORD_MATCHES = 3
-_DEFINITION_SEPARATOR_PATTERN = re.compile(r"[;,；，]")
-
-
-def _summarizeDefinition(definition: str) -> str:
-	"""Return the first sense of a definition for a compact candidate list."""
-	return _DEFINITION_SEPARATOR_PATTERN.split(definition, maxsplit=1)[0].strip()
 
 
 class TranslatableString(str):
@@ -220,7 +215,7 @@ class SpeechFilter:
 		self._isSpeakingTranslation = False
 		self._suppressCapture = 0
 		self._gracePeriodEnd = 0.0
-		self._wordDictionary = EnglishChineseDictionary()
+		self._wordDictionary = manager.wordDictionary
 		self._isWordDefinitionHookActive = False
 		self._origModuleSpellTextInfo = None
 		self._origPackageSpellTextInfo = None
@@ -231,11 +226,14 @@ class SpeechFilter:
 		"""Registers the speech filter, cue suppression hook, and speech hooks."""
 		filter_speechSequence.register(self.onSpeechSequence)
 		cues.registerSpeechHook(self.suppressNextCapture)
+		config.localDictionarySettingsChanged.register(self._updateWordDefinitionHook)
+		nvdaConfig.post_configProfileSwitch.register(self._updateWordDefinitionHook)
+		nvdaConfig.post_configReset.register(self._updateWordDefinitionHook)
 		self._patchGetPropertiesSpeech()
 		self._patchGetFormatFieldSpeech()
 		self._patchGetControlFieldSpeech()
 		self._patchGetSpellingSpeech()
-		self._patchSpellTextInfo()
+		self._updateWordDefinitionHook()
 		self._patchSpeakTypedCharacters()
 		self._patchSpeakText()
 		self._patchGetSelectionMessageSpeech()
@@ -243,6 +241,9 @@ class SpeechFilter:
 
 	def unregister(self) -> None:
 		"""Unregisters the speech filter, cue suppression hook, and restores speech hooks."""
+		config.localDictionarySettingsChanged.unregister(self._updateWordDefinitionHook)
+		nvdaConfig.post_configProfileSwitch.unregister(self._updateWordDefinitionHook)
+		nvdaConfig.post_configReset.unregister(self._updateWordDefinitionHook)
 		self._unpatchGetIndentationSpeech()
 		self._unpatchGetSelectionMessageSpeech()
 		self._unpatchSpeakText()
@@ -361,6 +362,13 @@ class SpeechFilter:
 		self._hookedModuleSpellTextInfo = None
 		self._hookedPackageSpellTextInfo = None
 
+	def _updateWordDefinitionHook(self) -> None:
+		"""Install or remove the text-review dictionary hook according to current settings."""
+		if config.getConfig().get("enableLocalDictionaryForTextReview", True):
+			self._patchSpellTextInfo()
+		else:
+			self._unpatchSpellTextInfo()
+
 	def _createSpellTextInfoHook(
 		self,
 		original: Callable[..., None],
@@ -392,41 +400,6 @@ class SpeechFilter:
 		normalizedLanguage = languageHandler.normalizeLanguage(languageHandler.getLanguage())
 		return bool(normalizedLanguage and normalizedLanguage.partition("_")[0] == "zh")
 
-	@staticmethod
-	def _formatWordLookupResult(result: WordLookupResult) -> str:
-		"""Format a local word lookup result for concise, localized speech."""
-		if not result.matches:
-			# Translators: Spoken when a valid-looking English word is absent from the bundled local
-			# dictionary. {word} is the word reviewed by the user.
-			return _("The local dictionary does not contain {word}.").format(word=result.word)
-
-		if len(result.matches) == 1:
-			entry, definition = result.matches[0]
-			if not result.isUppercaseFallback:
-				return definition
-			return _(
-				# Translators: Spoken when an all-capital word only matches a lowercase dictionary entry.
-				# {word} is the reviewed text, {entry} is the lowercase headword, and {definition} is its
-				# bundled definition.
-				"When read as lowercase {entry}, {word} may mean: {definition}. "
-				+ "In all caps, it may also be an abbreviation.",
-			).format(
-				entry=entry,
-				word=result.word,
-				definition=_summarizeDefinition(definition),
-			)
-
-		# Translators: One item in a spoken list of possible dictionary entries. {entry} is the
-		# dictionary headword and {definition} is its bundled definition.
-		candidateTemplate = _("{entry}: {definition}.")
-		candidates = " ".join(
-			candidateTemplate.format(entry=entry, definition=_summarizeDefinition(definition))
-			for entry, definition in result.matches[:_MAX_SPOKEN_WORD_MATCHES]
-		)
-		# Translators: Introduces a spoken list of up to three possible dictionary entries.
-		# {entries} contains the entries and their definitions.
-		return _("Possibilities: {entries}").format(entries=candidates)
-
 	@classmethod
 	def _speakWordLookupResult(
 		cls,
@@ -437,7 +410,7 @@ class SpeechFilter:
 		global _suppressAutoTranslationDepth
 		_suppressAutoTranslationDepth += 1
 		try:
-			speech.speakMessage(cls._formatWordLookupResult(result), priority=priority)
+			speech.speakMessage(formatWordLookupResult(result), priority=priority)
 		finally:
 			_suppressAutoTranslationDepth -= 1
 

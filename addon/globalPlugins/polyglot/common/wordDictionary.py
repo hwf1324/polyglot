@@ -6,6 +6,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+import addonHandler
 from logHandler import log
 
 from .wordDictionaryData import (
@@ -17,6 +18,11 @@ from .wordDictionaryData import (
 )
 
 
+addonHandler.initTranslation()
+
+
+_MAX_SPOKEN_WORD_MATCHES = 3
+_DEFINITION_SEPARATOR_PATTERN = re.compile(r"[;,；，]")
 _MIN_UNAMBIGUOUS_UPPER_LENGTH = 4
 _ABBREVIATION_PATTERN = re.compile(r"(?<![A-Za-z])abbr\.", re.IGNORECASE)
 _BUNDLED_DICTIONARY_PATH = Path(__file__).with_name("resources") / "dictionary.pickle"
@@ -45,6 +51,46 @@ class WordLookupResult:
 	word: str
 	matches: tuple[WordDictionaryMatch, ...]
 	isUppercaseFallback: bool = False
+
+
+def _summarizeDefinition(definition: str) -> str:
+	"""Return the first sense of a definition for a compact candidate list."""
+	return _DEFINITION_SEPARATOR_PATTERN.split(definition, maxsplit=1)[0].strip()
+
+
+def formatWordLookupResult(result: WordLookupResult) -> str:
+	"""Format a local word lookup result for concise, localized speech."""
+	if not result.matches:
+		# Translators: Spoken when a valid-looking English word is absent from the bundled local
+		# dictionary. {word} is the word reviewed by the user.
+		return _("The local dictionary does not contain {word}.").format(word=result.word)
+
+	if len(result.matches) == 1:
+		entry, definition = result.matches[0]
+		if not result.isUppercaseFallback:
+			return definition
+		return _(
+			# Translators: Spoken when an all-capital word only matches a lowercase dictionary entry.
+			# {word} is the reviewed text, {entry} is the lowercase headword, and {definition} is its
+			# bundled definition.
+			"When read as lowercase {entry}, {word} may mean: {definition}. "
+			+ "In all caps, it may also be an abbreviation.",
+		).format(
+			entry=entry,
+			word=result.word,
+			definition=_summarizeDefinition(definition),
+		)
+
+	# Translators: One item in a spoken list of possible dictionary entries. {entry} is the
+	# dictionary headword and {definition} is its bundled definition.
+	candidateTemplate = _("{entry}: {definition}.")
+	candidates = " ".join(
+		candidateTemplate.format(entry=entry, definition=_summarizeDefinition(definition))
+		for entry, definition in result.matches[:_MAX_SPOKEN_WORD_MATCHES]
+	)
+	# Translators: Introduces a spoken list of up to three possible dictionary entries.
+	# {entries} contains the entries and their definitions.
+	return _("Possibilities: {entries}").format(entries=candidates)
 
 
 def _stripSurroundingPunctuation(text: str) -> str:

@@ -158,7 +158,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def _executeTranslation(self, text: str, reverse: bool, showStatus: bool) -> None:
 		"""The single execution engine for all translation requests."""
 		if not reverse:
-			self.manager.requestTranslation(text, isManual=True, showStatus=showStatus)
+			self.manager.requestTranslation(
+				text,
+				isManual=True,
+				showStatus=showStatus,
+				preferLocalDictionary=True,
+			)
 		else:
 			newFrom, newTo, errorMessage = self.manager.getReverseLanguages()
 			if errorMessage:
@@ -170,6 +175,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				showStatus=showStatus,
 				langFrom=newFrom,
 				langTo=newTo,
+				preferLocalDictionary=True,
 			)
 
 	def _cycleLanguage(self, target: str, forward: bool) -> None:
