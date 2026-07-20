@@ -41,6 +41,7 @@ ALL_LANGUAGES = {
 	"spa": _("Spanish"),  # Baidu
 	"ru": _("Russian"),
 	"pt": _("Portuguese"),
+	"pt-BR": _("Portuguese (Brazil)"),
 	"it": _("Italian"),
 	"ar": _("Arabic"),
 	"ara": _("Arabic"),  # Baidu
